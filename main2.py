@@ -37,7 +37,6 @@ def menu_search_by(dictionary):
               "1 - Code\n"
               "2 - Country\n")
         option = input_int(1, 2, "Option: ")
-        country = ""
         if option == 1:
             code = input("Code: ")
             try:
@@ -74,7 +73,10 @@ def menu():
                 country = edit_tree(tree, country, year, '"' + str(to_insert) + '"')
             else:
                 country = edit_tree(tree, country, year, "")
-            refresh_file(country)
+            if country != 0:  # if country is found in the tree
+                refresh_file(country)
+            else:
+                print_errors(0)
         elif choice == 5:
             return
         print()
@@ -128,7 +130,7 @@ def print_values(country_list):
     print(country_list[0][1:-1], "(", country_list[1][1:-1], ")")
     for i in range(2, len(country_list)):
         if country_list[i] != "":
-            print(i + 1960, ":", country_list[i][1:-1])
+            print(1958 + i, ":", country_list[i][1:-1])
 
 
 def print_errors(error_number, min=0, max=0):

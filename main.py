@@ -11,6 +11,7 @@ def get_values():
         country = text[i].split(";")
         list_of_values += [country]
         dictionary[country[0][1:-1]] = country[1][1:-1]
+    print(list_of_values)
     return list_of_values, dictionary
 
 
@@ -119,7 +120,7 @@ def print_values(country_list):
     print(country_list[0][1:-1], "(", country_list[1][1:-1], ")")
     for i in range(2, len(country_list)):
         if country_list[i] != "":
-            print(i + 1960, ":", country_list[i][1:-1])
+            print(i + 1958, ":", country_list[i][1:-1])
 
 
 def print_errors(error_number, min=0, max=0):

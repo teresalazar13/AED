@@ -19,7 +19,7 @@ class AVLTree():
     def __init__(self, *args):
         self.node = None 
         self.height = -1  
-        self.balance = 0; 
+        self.balance = 0
         
         if len(args) == 1: 
             for i in args[0]: 
@@ -134,7 +134,7 @@ class AVLTree():
     def delete(self, key):
         # debug("Trying to delete at node: " + str(self.node.key))
         if self.node != None: 
-            if self.node.key == key: 
+            if self.node.key[0] == key:
                 debug("Deleting ... " + str(key))  
                 if self.node.left.node == None and self.node.right.node == None:
                     self.node = None # leaves can be killed at will 
@@ -232,3 +232,13 @@ class AVLTree():
                 self.node.left.display(level + 1, '<')
             if self.node.left != None:
                 self.node.right.display(level + 1, '>')
+
+    def print_values(self):
+        if not self.node:
+            return
+        if self.node.left:
+            self.node.left.print_values()
+        print(self.node.key[0], "-", self.node.key[1])
+        if self.node.right:
+            self.node.right.print_values()
+
