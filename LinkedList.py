@@ -13,50 +13,59 @@ class LinkedList:
         temp.set_next(self.head)
         self.head = temp
 
-    def remove(self, item):
-        current = self.head
-        previous = None
-        found = False
-        while not found:
-            if current.get_data() == item:
-                found = True
-            else:
-                previous = current
-                current = current.get_next()
-        if previous is None:
-            self.head = current.get_next()
-        else:
-            previous.set_next(current.get_next())
-
     def print_list(self):
         current_node = self.head
-        i = 0
         while current_node is not None:
-            if current_node.get_data() != "":
-                print(i + 1960, "-", current_node.get_data())
+            print(current_node.get_data()[0], "-", current_node.get_data()[1])
             current_node = current_node.get_next()
-            i += 1
 
-    # Given the year, changes the value
-    def edit(self, year, value_to_insert):
+    def remove_list(self, year):
         current_node = self.head
-        i = 0
-        while current_node is not None:
-            if i + 1960 == year:
-                current_node.set_data(value_to_insert)
-                return 1
+        if not current_node:
+            return 0
+        while current_node.get_next() and current_node.get_next().get_data()[0] < year:
             current_node = current_node.get_next()
-            i += 1
-        return 0
+        if current_node.get_next() and current_node.get_next().get_data()[0] == year:
+            current_node.set_next(current_node.get_next().get_next())
+        else:
+            return 0
+
+    # Edits the node and the list remains sorted
+    def edit(self, year, value):
+        current_node = self.head
+        while current_node and current_node.get_data()[0] < year:
+            current_node = current_node.get_next()
+        if current_node and current_node.get_data()[0] == year:  # If the next node has the year we are searching
+            current_node.set_data([year, value])
+        else:  # If the next year is bigger, we have to insert the node in the middle
+            return 0
+
+    # Insert the node and the list remains sorted
+    # Returns 0 if the node with the year already existed
+    def insert(self, year, value):
+        if self.is_empty():
+            self.add([year, value])
+            return 1
+        node = self.head
+        while node.get_next() and node.get_next().get_data()[0] < year:
+            node = node.get_next()
+        if not node.get_next():  # If the next node does no exist
+            node.set_next(Node([year, value]))
+        elif node.get_next().get_data()[0] == year:  # If the node with the year already existed, return 0
+            return 0
+        else:  # Insert the node and the list remains sorted
+            temp = Node([year, value])
+            temp.set_next(node.get_next())
+            node.set_next(temp)
 
     # Returns string in the format g.e ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"100";;;;;;;;;;"100";;;;;;;;;;"100";;"10";;;;
     def get_country_values_as_string(self):
         text = ""
         current_node = self.head
-        while current_node is not None:
-            if current_node.get_data():
-                text += '"' + str(current_node.get_data()) + '";'
+        for i in range(1960, 2017):
+            if current_node and current_node.get_data()[0] == i:
+                text += '"' + str(current_node.get_data()[1]) + '";'
+                current_node = current_node.get_next()
             else:
                 text += ";"
-            current_node = current_node.get_next()
         return text

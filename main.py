@@ -4,6 +4,7 @@ from LinkedList import LinkedList
 
 
 # Double Linked List. Each node has [Country Name, acronym, linked list with values, index in file]
+# Linked list with values. Each node has [year, value]. When there is no info about the year, there's no node
 # Gets values from file
 def get_double_linked_list_from_file():
     f = open("dados.csv", "r", encoding='utf-8')
@@ -14,12 +15,12 @@ def get_double_linked_list_from_file():
     for i in range(len(text) - 2, 0, -1):
         country = text[i].split(";")
         list_of_values = LinkedList()
+        year = 2016
         for j in range(len(country) - 1, 1, -1):
             value = country[j][1:-1]
             if value:
-                list_of_values.add(float(value))
-            else:
-                list_of_values.add("")
+                list_of_values.add(([year, float(value)]))
+            year -= 1
         list_of_countries.add_beginning([country[0][1:-1], country[1][1:-1], list_of_values, i])
         dictionary[country[1][1:-1]] = country[0][1:-1]
     return list_of_countries, dictionary
@@ -36,36 +37,48 @@ def menu():
               "4 - Remove\n"
               "5 - Exit\n")
         choice = input_int(1, 5, "Option: ")
-        if choice == 1:
-            menu_search(double_linked_list, dictionary)
-        elif choice in [2, 3, 4]:
-            year = input_int(1960, 2016, "Year: ")
-            if choice == 2:
-                to_insert = input_float(0.00, 100.00, "Element: ")
-                edit_country(double_linked_list, to_insert, year, dictionary)
-            elif choice == 3:
-                to_insert = input_float(0.00, 100.00, "New element: ")
-                edit_country(double_linked_list, to_insert, year, dictionary)
-            else:
-                edit_country(double_linked_list, "", year, dictionary)
-        elif choice == 5:
+        if choice == 5:
             return
+        country = get_country_values(double_linked_list, dictionary)
+        if country != 0:
+            if choice == 1:
+                country[2].print_list()
+            elif choice in [2, 3, 4]:
+                year = input_int(1960, 2016, "Year: ")
+                if choice == 2:
+                    to_insert = input_float(0.00, 100.00, "Element: ")
+                    if country[2].insert(year, to_insert) == 0:
+                        print_errors(5)
+                    else:
+                        refresh_file(country)
+                elif choice == 3:
+                    to_insert = input_float(0.00, 100.00, "New element: ")
+                    if country[2].edit(year, to_insert) == 0:
+                        print_errors(6)
+                    else:
+                        refresh_file(country)
+                else:
+                    if country[2].remove_list(year) != 0:
+                        refresh_file(country)
+                    else:
+                        print_errors(7)
 
 
 # Menu search
-def menu_search(double_linked_list, dictionary):
+def get_country_values(double_linked_list, dictionary):
     country_name = menu_search_by(dictionary)
     country_info = double_linked_list.find(country_name)
     if country_info:
-        country_info[2].print_list()
+        return country_info
     else:
         print_errors(0)
+        return 0
 
 
 # Menu search by
 def menu_search_by(dictionary):
     while True:
-        print("SEARCH BY:\n"
+        print("Find by:\n"
               "1 - Code\n"
               "2 - Country\n")
         option = input_int(1, 2, "Option: ")
@@ -79,18 +92,6 @@ def menu_search_by(dictionary):
         elif option == 2:
             country = input("Country: ")
             return country
-
-
-# Supports Insert, Edit or Remove
-# Searches through double linked list to get country -> [country name, acronym, list of values, index in file]
-def edit_country(double_linked_list, value_to_insert, year, dictionary):
-    country_name = menu_search_by(dictionary)
-    country_info = double_linked_list.find(country_name)
-    if country_info:
-        country_info[2].edit(year, value_to_insert)
-        refresh_file(country_info)
-    else:
-        print_errors(0)
 
 
 # Refresh file given [country name, acronym, list of values, index in file]
@@ -143,6 +144,12 @@ def print_errors(error_number, min_value=0, max_value=0):
         print("Value not valid")
     elif error_number == 4:
         print("Please insert a float")
+    elif error_number == 5:
+        print("Could not insert. Value already exists in this year.")
+    elif error_number == 6:
+        print("Could not edit. Value doesn't exist in this year.")
+    elif error_number == 7:
+        print("Could not remove. Value doesn't exist in this year.")
 
 
 # Main
