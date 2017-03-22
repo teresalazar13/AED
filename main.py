@@ -3,6 +3,7 @@ from DoubleLinkedList import DoubleLinkedList
 from LinkedList import LinkedList
 
 
+# TODO -> input strings
 # Double Linked List. Each node has [Country Name, acronym, linked list with values, index in file]
 # Linked list with values. Each node has [year, value]. When there is no info about the year, there's no node
 # Gets values from file
@@ -26,6 +27,34 @@ def get_double_linked_list_from_file():
     return list_of_countries, dictionary
 
 
+def search_options(double_linked_list, dictionary):
+    print("Search options:\n"
+          "option - (inputs) - description\n"
+          "1 - (Code|Country) - Get all values of a country\n"
+          "2 - (Code|Country, Year) - Get value of a specific year in a country\n"
+          "3 - (Code|Country, Value) - Get years that are >,< or = than a value in a country\n"
+          "4 - (Year) - Get values of a year of all countries\n"
+          "5 - (Value, Year) - Get all countries that have a value >,< or = in a year\n")
+    option = input_int(1, 6, "Option: ")
+    if option in [1, 2, 3, 4]:
+        country_info = get_country_values(double_linked_list, dictionary)
+        if option == 1:
+            country_info[2].print_list()
+        elif option == 2:
+            year = input_int(1960, 2016, "Year: ")
+            country_info[2].print_value_of_year(year)
+        elif option == 3:
+            value = input_int(0, 100, "Value: ")
+            print("Print years with value:\n"
+                  "1 - Bigger than", value,
+                  "\n2 - Smalled than", value,
+                  "\n3 - Equal to", value)
+            option = input_int(1, 3, "Option: ")
+            country_info[2].print_years_with_filter(value, option)
+    else:
+        print("TODO")
+
+
 # Menu
 def menu():
     double_linked_list, dictionary = get_double_linked_list_from_file()
@@ -37,13 +66,11 @@ def menu():
               "4 - Remove\n"
               "5 - Exit\n")
         choice = input_int(1, 5, "Option: ")
-        if choice == 5:
-            return
-        country = get_country_values(double_linked_list, dictionary)
-        if country != 0:
-            if choice == 1:
-                country[2].print_list()
-            elif choice in [2, 3, 4]:
+        if choice == 1:
+            search_options(double_linked_list, dictionary)
+        elif choice in [2, 3, 4]:
+            country = get_country_values(double_linked_list, dictionary)
+            if country != 0:
                 year = input_int(1960, 2016, "Year: ")
                 if choice == 2:
                     to_insert = input_float(0.00, 100.00, "Element: ")
@@ -62,9 +89,11 @@ def menu():
                         refresh_file(country)
                     else:
                         print_errors(7)
+        else:
+            return
 
 
-# Menu search
+# Returns country_info = [Country Name, acronym, linked list with values, index in file]
 def get_country_values(double_linked_list, dictionary):
     country_name = menu_search_by(dictionary)
     country_info = double_linked_list.find(country_name)
@@ -75,7 +104,7 @@ def get_country_values(double_linked_list, dictionary):
         return 0
 
 
-# Menu search by
+# Returns the name of a country
 def menu_search_by(dictionary):
     while True:
         print("Find by:\n"
