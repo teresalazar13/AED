@@ -32,9 +32,9 @@ def search_options(double_linked_list, dictionary):
           "option - (inputs) - description\n"
           "1 - (Code|Country) - Get all values of a country\n"
           "2 - (Code|Country, Year) - Get value of a specific year in a country\n"
-          "3 - (Code|Country, Value) - Get years that are >,< or = than a value in a country\n"
+          "3 - (Code|Country, Value) - Get years that are >, < or = than a value in a country\n"
           "4 - (Year) - Get values of a year of all countries\n"
-          "5 - (Value, Year) - Get all countries that have a value >,< or = in a year\n")
+          "5 - (Value, Year) - Get all countries that have a value >, < or = in a year\n")
     option = input_int(1, 6, "Option: ")
     if option in [1, 2, 3, 4]:
         country_info = get_country_values(double_linked_list, dictionary)
