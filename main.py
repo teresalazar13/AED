@@ -1,9 +1,7 @@
-import time
 from DoubleLinkedList import DoubleLinkedList
 from LinkedList import LinkedList
 
 
-# TODO -> input strings
 # Double Linked List. Each node has [Country Name, acronym, linked list with values, index in file]
 # Linked list with values. Each node has [year, value]. When there is no info about the year, there's no node
 # Gets values from file
@@ -27,6 +25,13 @@ def get_double_linked_list_from_file():
     return list_of_countries, dictionary
 
 
+def greater_smaller_equal(value):
+    print("1 - Greater than", value,
+          "\n2 - Smaller than", value,
+          "\n3 - Equal to", value)
+    return input_int(1, 3, "Option: ")
+
+
 def search_options(double_linked_list, dictionary):
     print("Search options:\n"
           "option - (inputs) - description\n"
@@ -36,23 +41,45 @@ def search_options(double_linked_list, dictionary):
           "4 - (Year) - Get values of a year of all countries\n"
           "5 - (Value, Year) - Get all countries that have a value >, < or = in a year\n")
     option = input_int(1, 6, "Option: ")
-    if option in [1, 2, 3, 4]:
+    if option in [1, 2, 3]:
         country_info = get_country_values(double_linked_list, dictionary)
-        if option == 1:
-            country_info[2].print_list()
-        elif option == 2:
-            year = input_int(1960, 2016, "Year: ")
-            country_info[2].print_value_of_year(year)
-        elif option == 3:
-            value = input_int(0, 100, "Value: ")
-            print("Print years with value:\n"
-                  "1 - Bigger than", value,
-                  "\n2 - Smalled than", value,
-                  "\n3 - Equal to", value)
-            option = input_int(1, 3, "Option: ")
-            country_info[2].print_years_with_filter(value, option)
+        if country_info != 0:
+            if option == 1:
+                country_info[2].print_list()
+            elif option == 2:
+                year = input_int(1960, 2016, "Year: ")
+                value = country_info[2].get_value_of_year(year)
+                if value != -1:
+                    print("Value:", value)
+                else:
+                    print("There's no information about that specific year")
+            elif option == 3:
+                value = input_float(0.0, 100.0, "Value: ")
+                option = greater_smaller_equal(value)
+                values = country_info[2].get_years_with_filter(value, option)
+                if not values:
+                    print("No years found with those specifications")
+                else:
+                    for v in values:
+                        print(v[0], ":", v[1])
     else:
-        print("TODO")
+        year = input_int(1960, 2016, "Year: ")
+        if option == 4:
+            values = double_linked_list.get_values_of_a_year_of_all_countries(year)
+            if not values:
+                print("No values found with those specifications")
+            else:
+                for i in range(len(values)):
+                    print(values[i][0], "-", values[i][1])
+        else:
+            value = input_float(0.0, 100.0, "Value: ")
+            option = greater_smaller_equal(value)
+            countries = double_linked_list.get_countries_with_filters(value, year, option)
+            if not countries:
+                print("No countries found with those specifications")
+            else:
+                for c in countries:
+                    print(c)
 
 
 # Menu
@@ -77,15 +104,18 @@ def menu():
                     if country[2].insert(year, to_insert) == 0:
                         print_errors(5)
                     else:
+                        country[2].print_list()
                         refresh_file(country)
                 elif choice == 3:
                     to_insert = input_float(0.00, 100.00, "New element: ")
                     if country[2].edit(year, to_insert) == 0:
                         print_errors(6)
                     else:
+                        country[2].print_list()
                         refresh_file(country)
                 else:
                     if country[2].remove_list(year) != 0:
+                        country[2].print_list()
                         refresh_file(country)
                     else:
                         print_errors(7)

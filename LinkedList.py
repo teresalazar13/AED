@@ -1,5 +1,6 @@
 from Node import Node
 
+
 class LinkedList:
     def __init__(self):
         self.head = None
@@ -18,37 +19,56 @@ class LinkedList:
             print(current_node.get_data()[0], "-", current_node.get_data()[1])
             current_node = current_node.get_next()
 
-    def print_value_of_year(self, year):
+    def get_value_of_year(self, year):
         current_node = self.head
         while current_node and current_node.get_data()[0] < year:
             current_node = current_node.get_next()
-        if current_node and current_node.get_data()[0] == year:  # If the next node has the year we are searching
-            print(year, "-", current_node.get_data()[1])
-        else:  # If the next year is bigger, we have to insert the node in the middle
-            print("There's no information about that specific year")
+        if current_node and current_node.get_data()[0] == year:
+            return current_node.get_data()[1]
+        else:
+            return -1
 
-    def print_years_with_filter(self, value, relate):
+    def get_years_with_filter(self, value, relate):
+        list_of_values = []
         current_node = self.head
-        # <
+        # >
         if relate == 1:
             while current_node:
-                if current_node.get_data()[1] < value:
-                    print(current_node.get_data()[0], "-", current_node.get_data()[0])
+                if current_node.get_data()[1] > value:
+                    list_of_values.append(current_node.get_data())
                 current_node = current_node.get_next()
-        # >
+        # <
         elif relate == 2:
             while current_node:
-                if current_node.get_data()[1] > value:
-                    print(current_node.get_data()[0], "-", current_node.get_data()[0])
+                if current_node.get_data()[1] < value:
+                    list_of_values.append(current_node.get_data())
                 current_node = current_node.get_next()
         # =
         else:
             while current_node:
                 if current_node.get_data()[1] == value:
-                    print(current_node.get_data()[0])
+                    list_of_values.append(current_node.get_data())
                 current_node = current_node.get_next()
+        return list_of_values
 
-    def remove_list(self, year):
+    def get_values_year(self, mode, limit, year):
+        current_node = self.head
+        while current_node and current_node.get_data()[0] < year:
+            current_node = current_node.get_next()
+        if not current_node or current_node.get_data()[0] != year:
+            return 0
+        if mode == 1:
+            if current_node.get_data()[1] > limit:
+                return current_node.get_data()
+        elif mode == 2:
+            if current_node.get_data()[1] < limit:
+                return current_node.get_data()
+        else:
+            if current_node.get_data()[1] == limit:
+                return current_node.get_data()
+        return 0
+
+    def remove(self, year):
         current_node = self.head
         if not current_node:
             return 0

@@ -105,3 +105,38 @@ class DoubleLinkedList:
                 return current_node.get_data()
             current_node = current_node.get_next()
         return
+
+    def get_values_of_a_year_of_all_countries(self, year):
+        list_of_values = []
+        current_node = self.head
+        while current_node is not None:
+            value = current_node.get_data()[2].get_value_of_year(year)
+            if value != -1:
+                list_of_values.append([current_node.get_data()[0], value])
+            current_node = current_node.get_next()
+        return list_of_values
+
+    def get_countries_with_filters(self, value, year, relate):
+        list_of_values = []
+        current_node = self.head
+        if relate == 1:
+            while current_node is not None:
+                value_node = current_node.get_data()[2].get_value_of_year(year)
+                if value_node > value:
+                    list_of_values.append(current_node.get_data()[0])
+                current_node = current_node.get_next()
+            return list_of_values
+        elif relate == 2:
+            while current_node is not None:
+                value_node = current_node.get_data()[2].get_value_of_year(year)
+                if value_node < value:
+                    list_of_values.append(current_node.get_data()[0])
+                current_node = current_node.get_next()
+            return list_of_values
+        else:
+            while current_node is not None:
+                value_node = current_node.get_data()[2].get_value_of_year(year)
+                if value_node == value:
+                    list_of_values.append(current_node.get_data()[0])
+                current_node = current_node.get_next()
+            return list_of_values

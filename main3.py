@@ -99,17 +99,21 @@ def menu():
                     if insert_tree(node[2], [year, to_insert]) == 0:
                         print_errors(5)
                     else:
+                        node[2].print_values()
                         refresh_file(node)
                 elif choice == 3:
                     to_insert = input_float(0.00, 100.00, "New element: ")
                     if edit_tree(node[2], [year, to_insert]) == 0:
                         print_errors(6)
                     else:
+                        node[2].print_values()
                         refresh_file(node)
                 else:
                     if node != 0:
                         # TODO - check if element is in tree to delete
                         # and call print_errors(7) if it doesn't exist
+                        node[2].delete(year)
+                        node[2].print_values()
                         refresh_file(node)
         else:
             return
@@ -129,12 +133,10 @@ def get_country_values(tree_of_trees, dictionary):
 # Refreshes file after tree of trees is changed
 def refresh_file(item):
     data = [""] * (2016 - 1960 + 1)
-    # TODO -> improve this function
+    # TODO - improve this function
     for i in range(1960, 2017):
         value = search_tree_of_values(item[2], i)
         if value != 0:
-            cena = '"' + str(value) + '"'
-            print(i, cena)
             data[i - 1960] = '"' + str(value) + '"'
     text = item[0] + ";" + item[1] + ";"
     for i in range(len(data) - 1):
