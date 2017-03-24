@@ -3,9 +3,18 @@
 outputdebug = False 
 
 
+def compare(a, b):
+    if a > b:
+        return 1
+    elif a < b:
+        return 2
+    else:
+        return 3
+
+
 def debug(msg):
     if outputdebug:
-        print (msg)
+        print(msg)
 
 
 class Node:
@@ -85,27 +94,27 @@ class AVLTree:
     def rrotate(self):
         # Rotate left pivoting on self
         debug('Rotating ' + str(self.node.key) + ' right')
-        A = self.node 
-        B = self.node.left.node 
-        T = B.right.node 
+        a = self.node
+        b = self.node.left.node
+        t = b.right.node
         
-        self.node = B 
-        B.right.node = A 
-        A.left.node = T 
+        self.node = b
+        b.right.node = a
+        a.left.node = t
 
     def lrotate(self):
         # Rotate left pivoting on self
         debug('Rotating ' + str(self.node.key) + ' left')
-        A = self.node 
-        B = self.node.right.node 
-        T = B.left.node 
+        a = self.node
+        b = self.node.right.node
+        t = b.left.node
         
-        self.node = B 
-        B.left.node = A 
-        A.right.node = T 
+        self.node = b
+        b.left.node = a
+        a.right.node = t
 
     def update_heights(self, recurse=True):
-        if not self.node is None:
+        if self.node is not None:
             if recurse: 
                 if self.node.left is not None:
                     self.node.left.update_heights()
@@ -118,7 +127,7 @@ class AVLTree:
             self.height = -1 
             
     def update_balances(self, recurse=True):
-        if not self.node is None:
+        if self.node is not None:
             if recurse: 
                 if self.node.left is not None:
                     self.node.left.update_balances()
@@ -134,7 +143,7 @@ class AVLTree:
             if self.node.key[0] == key:
                 debug("Deleting ... " + str(key))  
                 if self.node.left.node is None and self.node.right.node is None:
-                    self.node = None # leaves can be killed at will 
+                    self.node = None  # leaves can be killed at will
                 # if only one subtree, take that 
                 elif self.node.left.node is None:
                     self.node = self.node.right.node
@@ -149,16 +158,16 @@ class AVLTree:
                         self.node.key = replacement.key
                         # replaced. Now delete the key from right child 
                         self.node.right.delete(replacement.key)
-                    
+                self.print_values()
                 self.rebalance()
-                return 1
+                return
             elif key < self.node.key[0]:
                 self.node.left.delete(key)  
             elif key > self.node.key[0]:
                 self.node.right.delete(key)
-                        
             self.rebalance()
-        else: 
+        else:
+            print("Could not remove. Value doesn't exist in this year.")
             return 0
 
     def logical_predecessor(self, node):
@@ -179,7 +188,7 @@ class AVLTree:
         Find the smallese valued node in RIGHT child
         """
         node = node.right.node  
-        if node is not None: # just a sanity check
+        if node is not None:  # just a sanity check
             
             while node.left is not None:
                 debug("LS: traversing: " + str(node.key))
@@ -223,7 +232,7 @@ class AVLTree:
         self.update_heights()  # Must update heights before balances 
         self.update_balances()
         if self.node is not None:
-            print ('-' * level * 2, pref, self.node.key, "[" + str(self.height) + ":" + str(self.balance) + "]", 'L' if self.is_leaf() else ' ')
+            print('-' * level * 2, pref, self.node.key, "[" + str(self.height) + ":" + str(self.balance) + "]", 'L' if self.is_leaf() else ' ')
             if self.node.left is not None:
                 self.node.left.display(level + 1, '<')
             if self.node.left is not None:
@@ -237,3 +246,82 @@ class AVLTree:
         print(self.node.key[0], "-", self.node.key[1])
         if self.node.right:
             self.node.right.print_values()
+
+    # Search tree by the name of the country
+    # item = country
+    def search_tree(self, item):
+        if not self.node:
+            return 0
+        if item == self.node.key[0][1:-1]:
+            return self.node.key
+        elif item < self.node.key[0][1:-1]:
+            return self.node.left.search_tree(item)
+        else:
+            return self.node.right.search_tree(item)
+
+    # Search tree of values by the year
+    # item = year
+    def search_tree_of_values(self, item):
+        if not self.node:
+            return 0
+        if item == self.node.key[0]:
+            return self.node.key[1]
+        elif item < self.node.key[0]:
+            return self.node.left.search_tree_of_values(item)
+        else:
+            return self.node.right.search_tree_of_values(item)
+
+    # Insert year, value
+    # item = [year, value]
+    def insert_tree(self, item):
+        if not self.node:
+            self.insert(item)  # if item is not in tree, insert item
+            return 1
+        if item[0] == self.node.key[0]:
+            return 0  # if item is in tree, print error
+        elif item[0] < self.node.key[0]:
+            return self.node.left.insert_tree(item)
+        else:
+            return self.node.right.insert_tree(item)
+
+    # Edit year, value
+    # item = [year, value]
+    def edit_tree(self, item):
+        if not self.node:
+            return 0  # if item is not in tree, print error
+        if item[0] == self.node.key[0]:
+            self.node.key[1] = item[1]  # if item is in tree, edit it
+            return 1
+        elif item[0] < self.node.key[0]:
+            return self.node.left.edit_tree(item)
+        else:
+            return self.node.right.edit_tree(item)
+
+    def get_years_with_filter(self, value, option, list_of_years_and_values):
+        if not self.node:
+            return list_of_years_and_values
+        if compare(self.node.key[1], value) == option:
+            list_of_years_and_values.append(self.node.key)
+        left = self.node.left.get_years_with_filter(value, option, list_of_years_and_values)
+        right = self.node.right.get_years_with_filter(value, option, list_of_years_and_values)
+        return left and right
+
+    def get_values_by_year(self, year, values):
+        if not self.node:
+            return values
+        value = self.node.key[2].search_tree_of_values(year)
+        if value != 0:
+            values.append([self.node.key[0], self.node.key[2].search_tree_of_values(year)])
+        left = self.node.left.get_values_by_year(year, values)
+        right = self.node.right.get_values_by_year(year, values)
+        return left and right
+
+    def get_countries_with_filter(self, year, option, value_to_compare, values):
+        if not self.node:
+            return values
+        value = self.node.key[2].search_tree_of_values(year)
+        if value != 0 and compare(value, value_to_compare) == option:
+            values.append([self.node.key[0], self.node.key[2].search_tree_of_values(year)])
+        left = self.node.left.get_countries_with_filter(year, option, value_to_compare, values)
+        right = self.node.right.get_countries_with_filter(year, option, value_to_compare, values)
+        return left and right

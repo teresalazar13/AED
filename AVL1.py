@@ -20,7 +20,6 @@ class AVLTree:
         self.node = None 
         self.height = -1  
         self.balance = 0
-        
         if len(args) == 1: 
             for i in args[0]: 
                 self.insert(i)
@@ -36,24 +35,18 @@ class AVLTree:
     
     def insert(self, key):
         tree = self.node
-        
         new_node = Node(key)
-        
         if tree is None:
             self.node = new_node
             self.node.left = AVLTree() 
             self.node.right = AVLTree()
             debug("Inserted key [" + str(key) + "]")
-        
         elif key[0] < tree.key[0]:
             self.node.left.insert(key)
-            
         elif key[0] > tree.key[0]:
             self.node.right.insert(key)
-        
         else: 
             debug("Key [" + str(key) + "] already in tree.")
-            
         self.rebalance() 
         
     def rebalance(self):
@@ -72,7 +65,6 @@ class AVLTree:
                 self.rrotate()
                 self.update_heights()
                 self.update_balances()
-                
             if self.balance < -1:
                 if self.node.right.balance > 0:  
                     self.node.right.rrotate()  # we're in case III
@@ -88,7 +80,6 @@ class AVLTree:
         a = self.node
         b = self.node.left.node
         t = b.right.node
-        
         self.node = b
         b.right.node = a
         a.left.node = t
@@ -99,7 +90,6 @@ class AVLTree:
         a = self.node
         b = self.node.right.node
         t = b.left.node
-        
         self.node = b
         b.left.node = a
         a.right.node = t
@@ -111,9 +101,8 @@ class AVLTree:
                     self.node.left.update_heights()
                 if self.node.right is not None:
                     self.node.right.update_heights()
-            
             self.height = max(self.node.left.height,
-                              self.node.right.height) + 1 
+                              self.node.right.height) + 1
         else: 
             self.height = -1 
             
@@ -124,7 +113,6 @@ class AVLTree:
                     self.node.left.update_balances()
                 if self.node.right is not None:
                     self.node.right.update_balances()
-
             self.balance = self.node.left.height - self.node.right.height 
         else: 
             self.balance = 0 
@@ -141,24 +129,20 @@ class AVLTree:
                     self.node = self.node.right.node
                 elif self.node.right.node is None:
                     self.node = self.node.left.node
-                
                 # worst-case: both children present. Find logical successor
                 else:  
                     replacement = self.logical_successor(self.node)
                     if replacement is not None:  # sanity check
                         debug("Found replacement for " + str(key) + " -> " + str(replacement.key))  
-                        self.node.key = replacement.key 
-                        
+                        self.node.key = replacement.key
                         # replaced. Now delete the key from right child 
                         self.node.right.delete(replacement.key)
-                    
                 self.rebalance()
                 return  
             elif key < self.node.key: 
                 self.node.left.delete(key)  
             elif key > self.node.key: 
                 self.node.right.delete(key)
-                        
             self.rebalance()
         else: 
             return
@@ -209,8 +193,7 @@ class AVLTree:
         inlist.append(self.node.key)
         l = self.node.right.inorder_traverse()
         for i in l: 
-            inlist.append(i) 
-    
+            inlist.append(i)
         return inlist
 
     def display(self, level=0, pref=''):
@@ -237,16 +220,6 @@ class AVLTree:
             return self.node.left.search_tree(item)
         else:
             return self.node.right.search_tree(item)
-    '''
-    def values_by_year(self, year, mode=1, limit=-1,list_of_values=[]):
-        if self.node.left.node:
-            self.node.left.values_by_year(year,mode,limit,list_of_values)
-        info = self.node.key[2].get_values_year(mode,limit,year)
-        if info:
-            list_of_values+=[[self.node.key[0]]+[self.node.key[1]]+info]
-        if self.node.right.node:
-            self.node.right.values_by_year(year,mode,limit,list_of_values)
-        return list_of_values'''
     
     def values_by_year(self, year, mode=1, limit=-1):
         if self.node is None:
@@ -262,28 +235,3 @@ class AVLTree:
         for i in l: 
             inlist.append(i)
         return inlist
-    
-    '''
-       # country_or_code: 0 -> country || 1 -> code
-       def edit_tree(self, item, year, to_insert):
-           if not self.node:
-               return 0
-           if item == self.node.key[0][1:-1]:
-               self.node.key[2].edit_list(year,to_insert)
-               return self.node.key
-           elif item < self.node.key[0][1:-1]:
-               return edit_tree(self.node.left, item, year, to_insert)
-           else:
-               return edit_tree(self.node.right, item, year, to_insert)
-       
-       def remove_tree(self, item, year):
-           if not self.node:
-               return 0
-           if item == self.node.key[0][1:-1]:
-               self.node.key[2].remove(year)
-               return self.node.key
-           elif item < self.node.key[0][1:-1]:
-               return remove_tree(self.node.left, item, year)
-           else:
-               return remove_tree(self.node.right, item, year)        
-    '''

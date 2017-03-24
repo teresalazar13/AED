@@ -5,61 +5,47 @@ from LinkedList import *
 # Builds a tree from the values of the file
 # Each node is a list of the country, code and its values and the index of the country in the file
 # Sorted alphabetically by the name of the country
-def get_tree():
-    f = open("dados.csv", "r", encoding='utf-8')
-    dictionary = {}
-    text = f.read()
-    text = text.split("\n")
-    avl_tree = AVLTree()
-    for i in range(1, len(text) - 1):
-        raw_country = text[i].split(";")
-        country = [raw_country[0], raw_country[1]]
-        country.append(LinkedList())
-        country.append(i)
-        for j in range(2, len(raw_country)):
-            if raw_country[-j+1] != "":
-                country[2].add([2016 - j + 2, float(raw_country[-j+1][1:-1])])
-        avl_tree.insert(country)
-        dictionary[country[1][1:-1]] = country[0][1:-1]
-    return avl_tree, dictionary
 
-
-# Menu search
-def get_country_values(tree, dictionary):
-    country_name = menu_search_by(dictionary)
-    # start_time = time.time()
-    country_info = tree.search_tree(country_name)
-    # print("--- %s seconds ---" % (time.time() - start_time))
-    if not country_info:
-        print_errors(0)
-    return country_info
-
-
-# Menu search by
-def menu_search_by(dictionary):
+# Menu
+def menu():
+    tree, dictionary = get_tree()
     while True:
-        print("SEARCH BY:\n"
-              "1 - Code\n"
-              "2 - Country\n")
-        option = input_int(1, 2, "Option: ")
-        if option == 1:
-            code = input("Code: ")
-            try:
-                country = dictionary[code]
-                return country
-            except KeyError:
-                print_errors(0)
-        elif option == 2:
-            country = input("Country: ")
-            return country
+        print("CHOOSE:\n"
+              "1 - Search\n"
+              "2 - Insert\n"
+              "3 - Edit\n"
+              "4 - Remove\n"
+              "5 - Exit\n")
+        choice = input_int(1, 5, "Option: ")
+        if choice == 1:
+            search(tree, dictionary)
+        elif choice in [2, 3, 4]:
+            country = get_country_values(tree, dictionary)
+            if country != 0:
+                year = input_int(1960, 2016, "Year: ")
+                if choice == 2:
+                    to_insert = input_float(0.00, 100.00, "Element: ")
+                    if country[2].insert(year, to_insert) != 0:
+                        country[2].print_list()
+                        refresh_file(country)
+                    else:
+                        print_errors(5)
+                elif choice == 3:
+                    to_insert = input_float(0.00, 100.00, "New element: ")
+                    if country[2].edit(year, to_insert) != 0:
+                        country[2].print_list()
+                        refresh_file(country)
+                    else:
+                        print_errors(6)
+                else:
+                    if country[2].remove(year) != 0:
+                        country[2].print_list()
+                        refresh_file(country)
+                    else:
+                        print_errors(7)
+        else:
+            return
 
-
-def greater_smaller_equal(value):
-    print("1 - Greater than", value,
-          "\n2 - Smaller than", value,
-          "\n3 - Equal to", value)
-    return input_int(1, 3, "Option: ")
-    
 
 def search(tree, dictionary):
     print("Search options:\n"
@@ -69,7 +55,7 @@ def search(tree, dictionary):
           "3 - (Code|Country, Value) - Get years that are >,< or = than a value in a country\n"
           "4 - (Year) - Get values of a year of all countries\n"
           "5 - (Value, Year) - Get all countries that have a value >, < or = in a year\n"
-          "6 - Back")   
+          "6 - Back")
     option = input_int(1, 6, "Option: ")
     if option in [1, 2, 3]:
         country_info = get_country_values(tree, dictionary)
@@ -104,49 +90,62 @@ def search(tree, dictionary):
             print("No values found in this year")
         for v in values:
             print(v[0][1:-1], "(", v[1][1:-1], "):", v[3])
+    else:
+        return
 
 
-# Menu
-def menu():
-    tree, dictionary = get_tree()
+# Menu search by
+def menu_search_by(dictionary):
     while True:
-        print("CHOOSE:\n"
-              "1 - Search\n"
-              "2 - Insert\n"
-              "3 - Edit\n"
-              "4 - Remove\n"
-              "5 - Exit\n")
-        choice = input_int(1, 5, "Option: ")
-        if choice == 5:
-            return
-        if choice == 1:
-            search(tree, dictionary)
-        elif choice in [2, 3, 4]:
-            country = get_country_values(tree, dictionary)
-            if country != 0:
-                year = input_int(1960, 2016, "Year: ")
-                if choice == 2:
-                    to_insert = input_float(0.00, 100.00, "Element: ")
-                    if country[2].insert(year, to_insert) != 0:
-                        country[2].print_list()
-                        refresh_file(country)
-                    else:
-                        print_errors(5)
-                elif choice == 3:
-                    to_insert = input_float(0.00, 100.00, "New element: ")
-                    if country[2].edit(year, to_insert) != 0:
-                        country[2].print_list()
-                        refresh_file(country)
-                    else:
-                        print_errors(6)
-                else:
-                    if country[2].remove(year) != 0:
-                        country[2].print_list()
-                        refresh_file(country)
-                    else:
-                        print_errors(7)
-        else:
-            return
+        print("SEARCH BY:\n"
+              "1 - Code\n"
+              "2 - Country\n")
+        option = input_int(1, 2, "Option: ")
+        if option == 1:
+            code = input("Code: ")
+            try:
+                country = dictionary[code]
+                return country
+            except KeyError:
+                print_errors(0)
+        elif option == 2:
+            country = input("Country: ")
+            return country
+
+
+def greater_smaller_equal(value):
+    print("1 - Greater than", value,
+          "\n2 - Smaller than", value,
+          "\n3 - Equal to", value)
+    return input_int(1, 3, "Option: ")
+
+
+def get_tree():
+    f = open("dados.csv", "r", encoding='utf-8')
+    dictionary = {}
+    text = f.read()
+    text = text.split("\n")
+    avl_tree = AVLTree()
+    for i in range(1, len(text) - 1):
+        raw_country = text[i].split(";")
+        country = [raw_country[0], raw_country[1], LinkedList(), i]
+        for j in range(2, len(raw_country)):
+            if raw_country[-j+1] != "":
+                country[2].add([2016 - j + 2, float(raw_country[-j+1][1:-1])])
+        avl_tree.insert(country)
+        dictionary[country[1][1:-1]] = country[0][1:-1]
+    return avl_tree, dictionary
+
+
+# Menu search
+def get_country_values(tree, dictionary):
+    country_name = menu_search_by(dictionary)
+    # start_time = time.time()
+    country_info = tree.search_tree(country_name)
+    # print("--- %s seconds ---" % (time.time() - start_time))
+    if not country_info:
+        print_errors(0)
+    return country_info
 
 
 # Refreshes file after tree is changed
@@ -171,32 +170,6 @@ def refresh_file(data):
     f.close()
 
 
-def print_values(country_list):
-    print(country_list[0][1:-1], "(", country_list[1][1:-1], ")")
-    for i in range(2, len(country_list)):
-        if country_list[i] != "":
-            print(1958 + i, ":", country_list[i][1:-1])
-
-
-def print_errors(error_number, min_value=0, max_value=0):
-    if error_number == 0:
-        print("Country does not exist")
-    elif error_number == 1:
-        print("Please insert an int")
-    elif error_number == 2:
-        print("Can only operate between", min_value, "and", max_value)
-    elif error_number == 3:
-        print("Value not valid")
-    elif error_number == 4:
-        print("Please insert a float")
-    elif error_number == 5:
-        print("Could not insert. Value already exists in this year.")
-    elif error_number == 6:
-        print("Could not edit. Value doesn't exist in this year.")
-    elif error_number == 7:
-        print("Could not remove. Value doesn't exist in this year.")    
-
-
 def input_int(min_value, max_value, string):
     while True:
         try:
@@ -219,6 +192,25 @@ def input_float(min_value, max_value, string):
                 return item
         except ValueError:
             print_errors(4)
+
+
+def print_errors(error_number, min_value=0, max_value=0):
+    if error_number == 0:
+        print("Country does not exist")
+    elif error_number == 1:
+        print("Please insert an int")
+    elif error_number == 2:
+        print("Can only operate between", min_value, "and", max_value)
+    elif error_number == 3:
+        print("Value not valid")
+    elif error_number == 4:
+        print("Please insert a float")
+    elif error_number == 5:
+        print("Could not insert. Value already exists in this year.")
+    elif error_number == 6:
+        print("Could not edit. Value doesn't exist in this year.")
+    elif error_number == 7:
+        print("Could not remove. Value doesn't exist in this year.")
 
 
 # Main

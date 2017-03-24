@@ -2,37 +2,53 @@ from DoubleLinkedList import DoubleLinkedList
 from LinkedList import LinkedList
 
 
+# TODO - Double linked list - in the search function check if value is closer to the begginning or the end
 # Double Linked List. Each node has [Country Name, acronym, linked list with values, index in file]
 # Linked list with values. Each node has [year, value]. When there is no info about the year, there's no node
 # Gets values from file
-def get_double_linked_list_from_file():
-    f = open("dados.csv", "r", encoding='utf-8')
-    text = f.read()
-    text = text.split("\n")
-    list_of_countries = DoubleLinkedList()
-    dictionary = {}
-    for i in range(len(text) - 2, 0, -1):
-        country = text[i].split(";")
-        list_of_values = LinkedList()
-        year = 2016
-        for j in range(len(country) - 1, 1, -1):
-            value = country[j][1:-1]
-            if value:
-                list_of_values.add(([year, float(value)]))
-            year -= 1
-        list_of_countries.add_beginning([country[0][1:-1], country[1][1:-1], list_of_values, i])
-        dictionary[country[1][1:-1]] = country[0][1:-1]
-    return list_of_countries, dictionary
+
+# Menu
+def menu():
+    double_linked_list, dictionary = get_double_linked_list_from_file()
+    while True:
+        print("CHOOSE:\n"
+              "1 - Search\n"
+              "2 - Insert\n"
+              "3 - Edit\n"
+              "4 - Remove\n"
+              "5 - Exit\n")
+        choice = input_int(1, 5, "Option: ")
+        if choice == 1:
+            search(double_linked_list, dictionary)
+        elif choice in [2, 3, 4]:
+            country = get_country_values(double_linked_list, dictionary)
+            if country != 0:
+                year = input_int(1960, 2016, "Year: ")
+                if choice == 2:
+                    to_insert = input_float(0.00, 100.00, "Element: ")
+                    if country[2].insert(year, to_insert) == 0:
+                        print_errors(5)
+                    else:
+                        country[2].print_list()
+                        refresh_file(country)
+                elif choice == 3:
+                    to_insert = input_float(0.00, 100.00, "New element: ")
+                    if country[2].edit(year, to_insert) == 0:
+                        print_errors(6)
+                    else:
+                        country[2].print_list()
+                        refresh_file(country)
+                else:
+                    if country[2].remove_list(year) != 0:
+                        country[2].print_list()
+                        refresh_file(country)
+                    else:
+                        print_errors(7)
+        else:
+            return
 
 
-def greater_smaller_equal(value):
-    print("1 - Greater than", value,
-          "\n2 - Smaller than", value,
-          "\n3 - Equal to", value)
-    return input_int(1, 3, "Option: ")
-
-
-def search_options(double_linked_list, dictionary):
+def search(double_linked_list, dictionary):
     print("Search options:\n"
           "option - (inputs) - description\n"
           "1 - (Code|Country) - Get all values of a country\n"
@@ -82,58 +98,6 @@ def search_options(double_linked_list, dictionary):
                     print(c)
 
 
-# Menu
-def menu():
-    double_linked_list, dictionary = get_double_linked_list_from_file()
-    while True:
-        print("CHOOSE:\n"
-              "1 - Search\n"
-              "2 - Insert\n"
-              "3 - Edit\n"
-              "4 - Remove\n"
-              "5 - Exit\n")
-        choice = input_int(1, 5, "Option: ")
-        if choice == 1:
-            search_options(double_linked_list, dictionary)
-        elif choice in [2, 3, 4]:
-            country = get_country_values(double_linked_list, dictionary)
-            if country != 0:
-                year = input_int(1960, 2016, "Year: ")
-                if choice == 2:
-                    to_insert = input_float(0.00, 100.00, "Element: ")
-                    if country[2].insert(year, to_insert) == 0:
-                        print_errors(5)
-                    else:
-                        country[2].print_list()
-                        refresh_file(country)
-                elif choice == 3:
-                    to_insert = input_float(0.00, 100.00, "New element: ")
-                    if country[2].edit(year, to_insert) == 0:
-                        print_errors(6)
-                    else:
-                        country[2].print_list()
-                        refresh_file(country)
-                else:
-                    if country[2].remove_list(year) != 0:
-                        country[2].print_list()
-                        refresh_file(country)
-                    else:
-                        print_errors(7)
-        else:
-            return
-
-
-# Returns country_info = [Country Name, acronym, linked list with values, index in file]
-def get_country_values(double_linked_list, dictionary):
-    country_name = menu_search_by(dictionary)
-    country_info = double_linked_list.find(country_name)
-    if country_info:
-        return country_info
-    else:
-        print_errors(0)
-        return 0
-
-
 # Returns the name of a country
 def menu_search_by(dictionary):
     while True:
@@ -151,6 +115,44 @@ def menu_search_by(dictionary):
         elif option == 2:
             country = input("Country: ")
             return country
+
+
+def greater_smaller_equal(value):
+    print("1 - Greater than", value,
+          "\n2 - Smaller than", value,
+          "\n3 - Equal to", value)
+    return input_int(1, 3, "Option: ")
+
+
+def get_double_linked_list_from_file():
+    f = open("dados.csv", "r", encoding='utf-8')
+    text = f.read()
+    text = text.split("\n")
+    list_of_countries = DoubleLinkedList()
+    dictionary = {}
+    for i in range(len(text) - 2, 0, -1):
+        country = text[i].split(";")
+        list_of_values = LinkedList()
+        year = 2016
+        for j in range(len(country) - 1, 1, -1):
+            value = country[j][1:-1]
+            if value:
+                list_of_values.add(([year, float(value)]))
+            year -= 1
+        list_of_countries.add_beginning([country[0][1:-1], country[1][1:-1], list_of_values, i])
+        dictionary[country[1][1:-1]] = country[0][1:-1]
+    return list_of_countries, dictionary
+
+
+# Returns country_info = [Country Name, acronym, linked list with values, index in file]
+def get_country_values(double_linked_list, dictionary):
+    country_name = menu_search_by(dictionary)
+    country_info = double_linked_list.find(country_name)
+    if country_info:
+        return country_info
+    else:
+        print_errors(0)
+        return 0
 
 
 # Refresh file given [country name, acronym, list of values, index in file]
