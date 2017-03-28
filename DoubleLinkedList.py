@@ -97,13 +97,31 @@ class DoubleLinkedList:
                 return 1
         return 0
 
-    # Given the country name, finds [country name, acronym, list of values, index in file]
-    def find(self, item):
+    # Given the code, starts to search from the beginning or the end
+    def find(self, code):
+        if code < "M":
+            return self.find_beg(code)
+        else:
+            return self.find_backwards(code)
+
+    # Given the code name, finds [country name, acronym, list of values, index in file]. Starts in the beginning
+    # of the list
+    def find_beg(self, item):
         current_node = self.head
         while current_node is not None:
-            if current_node.get_data()[0] == item:
+            if current_node.get_data()[1] == item:
                 return current_node.get_data()
             current_node = current_node.get_next()
+        return
+
+    # Given the code name, finds [country name, acronym, list of values, index in file]. Starts in the end
+    # of the list
+    def find_backwards(self, item):
+        current_node = self.tail
+        while current_node is not None:
+            if current_node.get_data()[1] == item:
+                return current_node.get_data()
+            current_node = current_node.get_prev()
         return
 
     def get_values_of_a_year_of_all_countries(self, year):

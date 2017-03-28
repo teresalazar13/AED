@@ -42,28 +42,6 @@ class AVLTree:
     
     def is_leaf(self):
         return self.height == 0
-    
-    def insert(self, key):
-        tree = self.node
-        
-        new_node = Node(key)
-
-        if tree is None:
-            self.node = new_node
-            self.node.left = AVLTree() 
-            self.node.right = AVLTree()
-            debug("Inserted key [" + str(key) + "]")
-
-        elif key[0] < tree.key[0]:
-            self.node.left.insert(key)
-            
-        elif key[0] > tree.key[0]:
-            self.node.right.insert(key)
-        
-        else: 
-            debug("Key [" + str(key) + "] already in tree.")
-            
-        self.rebalance() 
         
     def rebalance(self):
         """
@@ -136,39 +114,7 @@ class AVLTree:
 
             self.balance = self.node.left.height - self.node.right.height 
         else: 
-            self.balance = 0 
-
-    def delete(self, key):
-        if self.node is not None:
-            if self.node.key[0] == key:
-                debug("Deleting ... " + str(key))  
-                if self.node.left.node is None and self.node.right.node is None:
-                    self.node = None  # leaves can be killed at will
-                # if only one subtree, take that 
-                elif self.node.left.node is None:
-                    self.node = self.node.right.node
-                elif self.node.right.node is None:
-                    self.node = self.node.left.node
-                
-                # worst-case: both children present. Find logical successor
-                else:  
-                    replacement = self.logical_successor(self.node)
-                    if replacement is not None:  # sanity check
-                        debug("Found replacement for " + str(key) + " -> " + str(replacement.key))  
-                        self.node.key = replacement.key
-                        # replaced. Now delete the key from right child 
-                        self.node.right.delete(replacement.key)
-                self.print_values()
-                self.rebalance()
-                return
-            elif key < self.node.key[0]:
-                self.node.left.delete(key)  
-            elif key > self.node.key[0]:
-                self.node.right.delete(key)
-            self.rebalance()
-        else:
-            print("Could not remove. Value doesn't exist in this year.")
-            return 0
+            self.balance = 0
 
     def logical_predecessor(self, node):
         """
@@ -238,6 +184,57 @@ class AVLTree:
             if self.node.left is not None:
                 self.node.right.display(level + 1, '>')
 
+    # Inserts element in tree
+    def insert(self, key):
+        tree = self.node
+        new_node = Node(key)
+        if tree is None:
+            self.node = new_node
+            self.node.left = AVLTree()
+            self.node.right = AVLTree()
+            debug("Inserted key [" + str(key) + "]")
+        elif key[0] < tree.key[0]:
+            self.node.left.insert(key)
+        elif key[0] > tree.key[0]:
+            self.node.right.insert(key)
+        else:
+            debug("Key [" + str(key) + "] already in tree.")
+        self.rebalance()
+
+    # Deletes year and value in tree. If the node does not exist informs user
+    def delete(self, key):
+        if self.node is not None:
+            if self.node.key[0] == key:
+                debug("Deleting ... " + str(key))
+                if self.node.left.node is None and self.node.right.node is None:
+                    self.node = None  # leaves can be killed at will
+                # if only one subtree, take that
+                elif self.node.left.node is None:
+                    self.node = self.node.right.node
+                elif self.node.right.node is None:
+                    self.node = self.node.left.node
+
+                # worst-case: both children present. Find logical successor
+                else:
+                    replacement = self.logical_successor(self.node)
+                    if replacement is not None:  # sanity check
+                        debug("Found replacement for " + str(key) + " -> " + str(replacement.key))
+                        self.node.key = replacement.key
+                        # replaced. Now delete the key from right child
+                        self.node.right.delete(replacement.key[0])
+                self.print_values()
+                self.rebalance()
+                return
+            elif key < self.node.key[0]:
+                self.node.left.delete(key)
+            elif key > self.node.key[0]:
+                self.node.right.delete(key)
+            self.rebalance()
+        else:
+            print("Could not remove. Value doesn't exist in this year.")
+            return 0
+
+    # Print years and values of a country
     def print_values(self):
         if not self.node:
             return
@@ -247,7 +244,7 @@ class AVLTree:
         if self.node.right:
             self.node.right.print_values()
 
-    # Search tree by the name of the country
+    # Search tree of countries by the name of the country
     # item = country
     def search_tree(self, item):
         if not self.node:
@@ -297,6 +294,7 @@ class AVLTree:
         else:
             return self.node.right.edit_tree(item)
 
+    # Get years that are >,< or = than a value in a country
     def get_years_with_filter(self, value, option, list_of_years_and_values):
         if not self.node:
             return list_of_years_and_values
@@ -306,6 +304,7 @@ class AVLTree:
         right = self.node.right.get_years_with_filter(value, option, list_of_years_and_values)
         return left and right
 
+    # Get values of a year of all countries
     def get_values_by_year(self, year, values):
         if not self.node:
             return values
@@ -316,6 +315,7 @@ class AVLTree:
         right = self.node.right.get_values_by_year(year, values)
         return left and right
 
+    # Get all countries that have a value >, < or = in a year
     def get_countries_with_filter(self, year, option, value_to_compare, values):
         if not self.node:
             return values

@@ -1,5 +1,6 @@
 from AVL1 import *
 from LinkedList import *
+import time
 
 
 # Builds a tree from the values of the file
@@ -8,7 +9,9 @@ from LinkedList import *
 
 # Menu
 def menu():
+    # start_time = time.time()
     tree, dictionary = get_tree()
+    # print("--- %s seconds ---" % (time.time() - start_time))
     while True:
         print("CHOOSE:\n"
               "1 - Search\n"
@@ -25,20 +28,29 @@ def menu():
                 year = input_int(1960, 2016, "Year: ")
                 if choice == 2:
                     to_insert = input_float(0.00, 100.00, "Element: ")
-                    if country[2].insert(year, to_insert) != 0:
+                    # start_time = time.time()
+                    operation = country[2].insert(year, to_insert)
+                    # print("--- %s seconds ---" % (time.time() - start_time))
+                    if operation != 0:
                         country[2].print_list()
                         refresh_file(country)
                     else:
                         print_errors(5)
                 elif choice == 3:
                     to_insert = input_float(0.00, 100.00, "New element: ")
-                    if country[2].edit(year, to_insert) != 0:
+                    # start_time = time.time()
+                    operation = country[2].edit(year, to_insert)
+                    # print("--- %s seconds ---" % (time.time() - start_time))
+                    if operation != 0:
                         country[2].print_list()
                         refresh_file(country)
                     else:
                         print_errors(6)
                 else:
-                    if country[2].remove(year) != 0:
+                    # start_time = time.time()
+                    operation = country[2].remove(year)
+                    # print("--- %s seconds ---" % (time.time() - start_time))
+                    if operation != 0:
                         country[2].print_list()
                         refresh_file(country)
                     else:
@@ -47,6 +59,7 @@ def menu():
             return
 
 
+# Menu search
 def search(tree, dictionary):
     print("Search options:\n"
           "option - (inputs) - description\n"
@@ -64,7 +77,9 @@ def search(tree, dictionary):
                 country_info[2].print_list()
             elif option == 2:
                 year = input_int(1960, 2016, "Year: ")
+                # start_time = time.time()
                 value = country_info[2].get_value_of_year(year)
+                # print("--- %s seconds ---" % (time.time() - start_time))
                 if value != -1:
                     print("Value:", value)
                 else:
@@ -72,7 +87,9 @@ def search(tree, dictionary):
             elif option == 3:
                 value = input_float(0.0, 100.0, "Value: ")
                 option = greater_smaller_equal(value)
+                # start_time = time.time()
                 values = country_info[2].get_years_with_filter(value, option)
+                # print("--- %s seconds ---" % (time.time() - start_time))
                 if not values:
                     print("No years found with those specifications")
                 else:
@@ -81,11 +98,15 @@ def search(tree, dictionary):
     if option in [4, 5]:
         year = input_int(1960, 2016, "Year: ")
         if option == 4:
+            # start_time = time.time()
             values = tree.values_by_year(year)
+            # print("--- %s seconds ---" % (time.time() - start_time))
         else:
             value = input_float(0.0, 100.0, "Value: ")
             option = greater_smaller_equal(value)
+            # start_time = time.time()
             values = tree.values_by_year(year, option, value)
+            # print("--- %s seconds ---" % (time.time() - start_time))
         if not values:
             print("No values found in this year")
         for v in values:
@@ -94,7 +115,7 @@ def search(tree, dictionary):
         return
 
 
-# Menu search by
+# Returns the code of a country
 def menu_search_by(dictionary):
     while True:
         print("SEARCH BY:\n"
@@ -113,6 +134,7 @@ def menu_search_by(dictionary):
             return country
 
 
+# Menu greater, smaller or equal
 def greater_smaller_equal(value):
     print("1 - Greater than", value,
           "\n2 - Smaller than", value,
@@ -120,6 +142,18 @@ def greater_smaller_equal(value):
     return input_int(1, 3, "Option: ")
 
 
+# Returns country_info = [Country Name, acronym, AVL tree of values, index in file]
+def get_country_values(tree, dictionary):
+    country_name = menu_search_by(dictionary)
+    start_time = time.time()
+    country_info = tree.search_tree(country_name)
+    print("--- %s seconds ---" % (time.time() - start_time))
+    if not country_info:
+        print_errors(0)
+    return country_info
+
+
+# Reads file and stores data in tree
 def get_tree():
     f = open("dados.csv", "r", encoding='utf-8')
     dictionary = {}
@@ -137,18 +171,7 @@ def get_tree():
     return avl_tree, dictionary
 
 
-# Menu search
-def get_country_values(tree, dictionary):
-    country_name = menu_search_by(dictionary)
-    # start_time = time.time()
-    country_info = tree.search_tree(country_name)
-    # print("--- %s seconds ---" % (time.time() - start_time))
-    if not country_info:
-        print_errors(0)
-    return country_info
-
-
-# Refreshes file after tree is changed
+# Updates file given [country name, acronym, list of values, index in file], after tree is changed
 def refresh_file(data):
     text = data[0] + ";" + data[1]
     node = data[2].head
@@ -170,6 +193,7 @@ def refresh_file(data):
     f.close()
 
 
+# Protection for int inputs
 def input_int(min_value, max_value, string):
     while True:
         try:
@@ -182,6 +206,7 @@ def input_int(min_value, max_value, string):
             print_errors(1)
 
 
+# Protection for float inputs
 def input_float(min_value, max_value, string):
     while True:
         try:
@@ -194,6 +219,7 @@ def input_float(min_value, max_value, string):
             print_errors(4)
 
 
+# Given the error iD (optional: min_value and max_value), prints an error
 def print_errors(error_number, min_value=0, max_value=0):
     if error_number == 0:
         print("Country does not exist")

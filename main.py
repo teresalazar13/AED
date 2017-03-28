@@ -1,15 +1,17 @@
 from DoubleLinkedList import DoubleLinkedList
 from LinkedList import LinkedList
+import time
 
 
-# TODO - Double linked list - in the search function check if value is closer to the begginning or the end
 # Double Linked List. Each node has [Country Name, acronym, linked list with values, index in file]
 # Linked list with values. Each node has [year, value]. When there is no info about the year, there's no node
 # Gets values from file
 
 # Menu
 def menu():
+    # start_time = time.time()
     double_linked_list, dictionary = get_double_linked_list_from_file()
+    # print("--- %s seconds ---" % (time.time() - start_time))
     while True:
         print("CHOOSE:\n"
               "1 - Search\n"
@@ -26,20 +28,29 @@ def menu():
                 year = input_int(1960, 2016, "Year: ")
                 if choice == 2:
                     to_insert = input_float(0.00, 100.00, "Element: ")
-                    if country[2].insert(year, to_insert) == 0:
+                    # start_time = time.time()
+                    operation = country[2].insert(year, to_insert)
+                    # print("--- %s seconds ---" % (time.time() - start_time))
+                    if operation == 0:
                         print_errors(5)
                     else:
                         country[2].print_list()
                         refresh_file(country)
                 elif choice == 3:
                     to_insert = input_float(0.00, 100.00, "New element: ")
-                    if country[2].edit(year, to_insert) == 0:
+                    start_time = time.time()
+                    operation = country[2].edit(year, to_insert)
+                    print("--- %s seconds ---" % (time.time() - start_time))
+                    if operation == 0:
                         print_errors(6)
                     else:
                         country[2].print_list()
                         refresh_file(country)
                 else:
-                    if country[2].remove_list(year) != 0:
+                    # start_time = time.time()
+                    operation = country[2].remove(year)
+                    # print("--- %s seconds ---" % (time.time() - start_time))
+                    if operation != 0:
                         country[2].print_list()
                         refresh_file(country)
                     else:
@@ -48,6 +59,7 @@ def menu():
             return
 
 
+# Menu search
 def search(double_linked_list, dictionary):
     print("Search options:\n"
           "option - (inputs) - description\n"
@@ -64,7 +76,9 @@ def search(double_linked_list, dictionary):
                 country_info[2].print_list()
             elif option == 2:
                 year = input_int(1960, 2016, "Year: ")
+                # start_time = time.time()
                 value = country_info[2].get_value_of_year(year)
+                # print("--- %s seconds ---" % (time.time() - start_time))
                 if value != -1:
                     print("Value:", value)
                 else:
@@ -72,7 +86,9 @@ def search(double_linked_list, dictionary):
             elif option == 3:
                 value = input_float(0.0, 100.0, "Value: ")
                 option = greater_smaller_equal(value)
+                # start_time = time.time()
                 values = country_info[2].get_years_with_filter(value, option)
+                # print("--- %s seconds ---" % (time.time() - start_time))
                 if not values:
                     print("No years found with those specifications")
                 else:
@@ -81,7 +97,9 @@ def search(double_linked_list, dictionary):
     else:
         year = input_int(1960, 2016, "Year: ")
         if option == 4:
+            # start_time = time.time()
             values = double_linked_list.get_values_of_a_year_of_all_countries(year)
+            # print("--- %s seconds ---" % (time.time() - start_time))
             if not values:
                 print("No values found with those specifications")
             else:
@@ -90,7 +108,9 @@ def search(double_linked_list, dictionary):
         else:
             value = input_float(0.0, 100.0, "Value: ")
             option = greater_smaller_equal(value)
+            # start_time = time.time()
             countries = double_linked_list.get_countries_with_filters(value, year, option)
+            # print("--- %s seconds ---" % (time.time() - start_time))
             if not countries:
                 print("No countries found with those specifications")
             else:
@@ -98,7 +118,7 @@ def search(double_linked_list, dictionary):
                     print(c)
 
 
-# Returns the name of a country
+# Returns the code of a country
 def menu_search_by(dictionary):
     while True:
         print("Find by:\n"
@@ -107,16 +127,17 @@ def menu_search_by(dictionary):
         option = input_int(1, 2, "Option: ")
         if option == 1:
             code = input("Code: ")
-            try:
-                country = dictionary[code]
-                return country
-            except KeyError:
-                print_errors(0)
+            return code
         elif option == 2:
             country = input("Country: ")
-            return country
+            try:
+                code = dictionary[country]
+                return code
+            except KeyError:
+                print_errors(0)
 
 
+# Menu greater, smaller or equal
 def greater_smaller_equal(value):
     print("1 - Greater than", value,
           "\n2 - Smaller than", value,
@@ -124,6 +145,20 @@ def greater_smaller_equal(value):
     return input_int(1, 3, "Option: ")
 
 
+# Returns country_info = [Country Name, acronym, linked list with values, index in file]
+def get_country_values(double_linked_list, dictionary):
+    code = menu_search_by(dictionary)
+    start_time = time.time()
+    country_info = double_linked_list.find(code)
+    print("--- %s seconds ---" % (time.time() - start_time))
+    if country_info:
+        return country_info
+    else:
+        print_errors(0)
+        return 0
+
+
+# Reads file and stores data in double linked list
 def get_double_linked_list_from_file():
     f = open("dados.csv", "r", encoding='utf-8')
     text = f.read()
@@ -140,22 +175,11 @@ def get_double_linked_list_from_file():
                 list_of_values.add(([year, float(value)]))
             year -= 1
         list_of_countries.add_beginning([country[0][1:-1], country[1][1:-1], list_of_values, i])
-        dictionary[country[1][1:-1]] = country[0][1:-1]
+        dictionary[country[0][1:-1]] = country[1][1:-1]
     return list_of_countries, dictionary
 
 
-# Returns country_info = [Country Name, acronym, linked list with values, index in file]
-def get_country_values(double_linked_list, dictionary):
-    country_name = menu_search_by(dictionary)
-    country_info = double_linked_list.find(country_name)
-    if country_info:
-        return country_info
-    else:
-        print_errors(0)
-        return 0
-
-
-# Refresh file given [country name, acronym, list of values, index in file]
+# Updates file given [country name, acronym, list of values, index in file], after double linked list is changed
 def refresh_file(country_info):
     text = '"' + country_info[0] + '";"' + country_info[1] + '";'
     text += country_info[2].get_country_values_as_string()[:-1] + "\n"
@@ -170,6 +194,7 @@ def refresh_file(country_info):
     f.close()
 
 
+# Protection for int inputs
 def input_int(min_value, max_value, string):
     while True:
         try:
@@ -182,6 +207,7 @@ def input_int(min_value, max_value, string):
             print_errors(1)
 
 
+# Protection for float inputs
 def input_float(min_value, max_value, string):
     while True:
         try:
@@ -194,6 +220,7 @@ def input_float(min_value, max_value, string):
             print_errors(4)
 
 
+# Given the error iD (optional: min_value and max_value), prints an error
 def print_errors(error_number, min_value=0, max_value=0):
     if error_number == 0:
         print("Country does not exist")
