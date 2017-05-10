@@ -1,12 +1,14 @@
+from graph_tool.all import *
 from Vertex import *
+
 
 class Graph:
     def __init__(self):
         self.vert_list = {}
-        self.numVertices = 0
+        self.num_vertices = 0
 
     def add_vertex(self, key):
-        self.numVertices += 1
+        self.num_vertices += 1
         new_vertex = Vertex(key)
         self.vert_list[key] = new_vertex
         return new_vertex
@@ -25,10 +27,18 @@ class Graph:
             nv = self.add_vertex(f)
         if t not in self.vert_list:
             nv = self.add_vertex(t)
-        self.vert_list[f].addNeighbor(self.vert_list[t], cost)
+        self.vert_list[f].add_neighbour(self.vert_list[t], cost)
 
     def get_vertices(self):
         return self.vert_list.keys()
 
     def __iter__(self):
         return iter(self.vert_list.values())
+
+    def print(self):
+        string = ""
+        for k, v in self.vert_list.items():
+            string += "\n" + str(v.id) + "\n"
+            for kk, vv in v.connected_to.items():
+                string += "\t" + str(kk.id) + " weight: " + str(vv) + "\n"
+        print(string)
