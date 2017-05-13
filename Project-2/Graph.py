@@ -1,11 +1,11 @@
-from graph_tool.all import *
 from Vertex import *
 
 
 class Graph:
-    def __init__(self):
+    def __init__(self, start):
         self.vert_list = {}
         self.num_vertices = 0
+        self.start = start
 
     def add_vertex(self, key):
         self.num_vertices += 1
@@ -36,9 +36,9 @@ class Graph:
         return iter(self.vert_list.values())
 
     def print(self):
+        print("start in", self.start)
         string = ""
         for k, v in self.vert_list.items():
-            string += "\n" + str(v.id) + "\n"
             for kk, vv in v.connected_to.items():
-                string += "\t" + str(kk.id) + " weight: " + str(vv) + "\n"
+                string += str(v.id) + " -> " + str(kk.id) + " " + str(vv) + "\n"
         print(string)
