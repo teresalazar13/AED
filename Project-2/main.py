@@ -37,10 +37,17 @@ def map_generator(number_of_cities):
     for i in range(len(cities)):
         for j in range(i + 1, len(cities)):
             graph.add_edge(cities[i], cities[j], random.randint(10, 100))
-    graph.print()
+    return graph
+
+
+def write_map(filename, graph):
+    f = open(filename, "w", encoding='utf-8')
+    f.writelines(graph.print_file())
+    f.close()
 
 
 if __name__ == '__main__':
     # create_structure()
     # read_map("Tarefa_1_4.txt").print()
-    map_generator(5)
+    graph = map_generator(5)
+    write_map("Tarefa_1_5.txt", graph)

@@ -35,6 +35,13 @@ class Graph:
     def __iter__(self):
         return iter(self.vert_list.values())
 
+    def print_file(self):
+        string = self.start + "\n"
+        for k, v in self.vert_list.items():
+            for kk, vv in v.connected_to.items():
+                string += str(v.id) + "," + str(kk.id) + "," + str(vv) + "\n"
+        return string
+
     def print(self):
         print("start in", self.start)
         string = ""
