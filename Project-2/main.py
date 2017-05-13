@@ -1,4 +1,5 @@
 from Graph import *
+import random
 
 
 def create_structure():
@@ -27,6 +28,19 @@ def read_map(filename):
     return graph
 
 
+# TODO -> different distances
+def map_generator(number_of_cities):
+    cities = []
+    for i in range(number_of_cities):
+        cities.append(chr(i + 65))
+    graph = Graph(cities[random.randint(0, number_of_cities-1)])
+    for i in range(len(cities)):
+        for j in range(i + 1, len(cities)):
+            graph.add_edge(cities[i], cities[j], random.randint(10, 100))
+    graph.print()
+
+
 if __name__ == '__main__':
     # create_structure()
-    read_map("Tarefa_1_4.txt").print()
+    # read_map("Tarefa_1_4.txt").print()
+    map_generator(5)
