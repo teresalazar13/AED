@@ -35,6 +35,25 @@ class Graph:
     def __iter__(self):
         return iter(self.vert_list.values())
 
+    def find_all_paths(self, number_of_cities, start_vertex, end_vertex, path=[]):
+        path = path + [start_vertex]
+        if start_vertex == end_vertex:
+            return [path]
+        paths = []
+        for vertex in self.vert_list:
+            if vertex not in path:
+                extended_paths = self.find_all_paths(number_of_cities, vertex, end_vertex, path)
+                for p in extended_paths:
+                    if len(p) == number_of_cities:
+                        paths.append(p)
+        return paths
+
+    def path_length(self, path):
+        length = 0
+        for i in range(len(path)-1):
+            length += self.get_vertex(path[i]).get_weight(self.get_vertex(path[i+1]))
+        return length
+
     def print_file(self):
         string = self.start + "\n"
         for k, v in self.vert_list.items():

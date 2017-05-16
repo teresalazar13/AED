@@ -6,8 +6,8 @@ class Vertex:
     def add_neighbour(self, nbr, weight=0):
         self.connected_to[nbr] = weight
 
-    #def __str__(self):
-    #  return str(self.id) + ' connected to: ' + str([x.id for x in self.connected_to])
+    # def __str__(self):
+    #   return str(self.id) + ' connected to: ' + str([x.id for x in self.connected_to])
 
     def get_connections(self):
         return self.connected_to.keys()
@@ -16,4 +16,7 @@ class Vertex:
         return self.id
 
     def get_weight(self, nbr):
-        return self.connected_to[nbr]
+        try:
+            return self.connected_to[nbr]
+        except:
+            return None
