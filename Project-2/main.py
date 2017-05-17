@@ -26,26 +26,6 @@ def create_structure():
     graph.print()
 
 
-# Reads map from file
-def read_map(filename):
-    f = open(filename, "r", encoding='utf-8')
-    text = f.read()
-    text = text.split("\n")
-    graph = Graph(text[0])
-    for i in range(1, len(text) - 1):
-        connection = text[i].split(",")
-        graph.add_edge(connection[0], connection[1], connection[2])
-        graph.add_edge(connection[1], connection[0], connection[2])
-    return graph
-
-
-# Writes map into file
-def write_map(filename, graph):
-    f = open(filename, "w", encoding='utf-8')
-    f.writelines(graph.print_file())
-    f.close()
-
-
 # Generates a map with a certain number of cities
 def map_generator(number_of_cities):
     distances = get_distances(number_of_cities)
@@ -91,6 +71,26 @@ def prints_paths_and_distances(graph):
             for path in paths:
                 path.append(graph.start)
                 print(path, graph.path_length(path))
+
+
+# Reads map from file
+def read_map(filename):
+    f = open(filename, "r", encoding='utf-8')
+    text = f.read()
+    text = text.split("\n")
+    graph = Graph(text[0])
+    for i in range(1, len(text) - 1):
+        connection = text[i].split(",")
+        graph.add_edge(connection[0], connection[1], connection[2])
+        graph.add_edge(connection[1], connection[0], connection[2])
+    return graph
+
+
+# Writes map into file
+def write_map(filename, graph):
+    f = open(filename, "w", encoding='utf-8')
+    f.writelines(graph.print_file())
+    f.close()
 
 
 if __name__ == '__main__':
