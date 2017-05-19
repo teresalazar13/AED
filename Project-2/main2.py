@@ -1,23 +1,26 @@
 import random
 
 
+# TAREFA 2
+# ALGORITHM - KELP HART (DYNAMIC PROGRAMMING)
+
 # Example of a Structure
 def create_structure():
-    graph = [[1, 2, 3],
-             [4, 6, 7],
-             [7, 9, 8]]
+    graph = [[0, 2, 3],
+             [4, 0, 7],
+             [7, 9, 0]]
     print(graph)
 
 
 # Finds shortest path from start vertex, passing through all vertexes and ending in starting point
 def find_shortest_path(graph):
-    def get_minimun_distance_and_parent(target_city, combinations):
+    def get_minimum_distance_and_parent(target_city, combinations):
         if combinations:
             dists = []
             parent_cities = []
             for parent_city in combinations:
                 dists.append(graph[parent_city][target_city] +
-                             get_minimun_distance_and_parent(parent_city, combinations - set([parent_city]))[0])
+                             get_minimum_distance_and_parent(parent_city, combinations - set([parent_city]))[0])
                 parent_cities.append(parent_city)
             minimum_distance = min(dists)
             return minimum_distance, parent_cities[dists.index(minimum_distance)]
@@ -30,7 +33,7 @@ def find_shortest_path(graph):
     combinations = set(range(1, len(graph)))
 
     while True:
-        distance, parent_city = get_minimun_distance_and_parent(target_city, combinations)
+        distance, parent_city = get_minimum_distance_and_parent(target_city, combinations)
         if parent_city == 0:
             return best_path[::-1], distances[0]
         best_path.append(parent_city)
@@ -97,9 +100,9 @@ def write_map(filename, graph):
 
 # Main function
 if __name__ == '__main__':
-    graph = create_map(10)
-    write_map("Tarefa_2_10.txt", graph)
-    graph2 = read_map("Tarefa_2_10.txt", 10)
+    graph = create_map(11)
+    write_map("Tarefa_2_11.txt", graph)
+    graph2 = read_map("Tarefa_2_11.txt", 11)
     print(graph2)
     print(find_shortest_path(graph))
 

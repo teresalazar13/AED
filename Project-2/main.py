@@ -50,6 +50,7 @@ def get_distances(n):
     distances = []
     for i in range(5, range_of_distances + 10):
         distances.append(i*5)
+    random.shuffle(distances)
     return distances
 
 
