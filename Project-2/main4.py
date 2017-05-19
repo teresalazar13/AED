@@ -34,6 +34,26 @@ def generate_map(number_of_cities):
     return graph, sorted_graph
 
 
+# Creates array of distances
+def get_distances(n):
+    range_of_distances = combinations(n, 2)
+    distances = []
+    for i in range(5, range_of_distances + 10):
+        distances.append(i*5)
+    random.shuffle(distances)
+    return distances
+
+
+# Returns number of distances needed according to number of cities
+def combinations(n, r):
+    r = min(r, n-r)
+    if r == 0:
+        return 1
+    numerator = reduce(op.mul, range(n, n-r, -1))
+    denominator = reduce(op.mul, range(1, r+1))
+    return numerator // denominator
+
+
 # Reads map from file
 def read_map(filename):
     f = open(filename, "r", encoding='utf-8')
@@ -55,26 +75,6 @@ def write_map(graph, filename):
         string += min(graph[i][0]) + "," + max(graph[i][0]) + "," + str(graph[i][1]) + "\n"
     f.write(string)
     f.close()
-
-
-# Creates array of distances
-def get_distances(n):
-    range_of_distances = combinations(n, 2)
-    distances = []
-    for i in range(5, range_of_distances + 10):
-        distances.append(i*5)
-    random.shuffle(distances)
-    return distances
-
-
-# Returns number of distances needed according to number of cities
-def combinations(n, r):
-    r = min(r, n-r)
-    if r == 0:
-        return 1
-    numerator = reduce(op.mul, range(n, n-r, -1))
-    denominator = reduce(op.mul, range(1, r+1))
-    return numerator // denominator
 
 
 # Finds the nearest neighbour of a given vertex that is not in path
@@ -104,6 +104,7 @@ def find_shortest_path(graph, start, number_of_cities):
     print(path)
 
 
+# Main function
 if __name__ == '__main__':
     # graph = create_structure()
     unsorted_graph, graph = generate_map(10)

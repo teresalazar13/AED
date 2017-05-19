@@ -4,6 +4,10 @@ from functools import reduce
 import random
 
 
+# TAREFA 2
+# ALGORITHM - BRUTE FORCE
+
+
 # Example of a Structure
 def create_structure():
     graph = Graph("A")
@@ -64,16 +68,6 @@ def combinations(n, r):
     return numerator // denominator
 
 
-# Prints each possible path and its distance
-def prints_paths_and_distances(graph):
-    for k, v in graph.vert_list.items():
-        if k != graph.start:
-            paths = graph.find_all_paths(graph.num_vertices, graph.start, k)
-            for path in paths:
-                path.append(graph.start)
-                print(path, graph.path_length(path))
-
-
 # Reads map from file
 def read_map(filename):
     f = open(filename, "r", encoding='utf-8')
@@ -94,6 +88,17 @@ def write_map(filename, graph):
     f.close()
 
 
+# Prints each possible path and its distance
+def prints_paths_and_distances(graph):
+    for k, v in graph.vert_list.items():
+        if k != graph.start:
+            paths = graph.find_all_paths(graph.num_vertices, graph.start, k)
+            for path in paths:
+                path.append(graph.start)
+                print(path, graph.path_length(path))
+
+
+# Main function
 if __name__ == '__main__':
     # create_structure()
     # graph = read_map("Tarefa_1_4.txt")
