@@ -39,22 +39,12 @@ def generate_map(number_of_cities):
 
 # Creates array of distances
 def get_distances(n):
-    range_of_distances = combinations(n, 2)
+    range_of_distances = n * (n-1) / 2
     distances = []
     for i in range(5, range_of_distances + 10):
         distances.append(i*5)
     random.shuffle(distances)
     return distances
-
-
-# Returns number of distances needed according to number of cities
-def combinations(n, r):
-    r = min(r, n-r)
-    if r == 0:
-        return 1
-    numerator = reduce(op.mul, range(n, n-r, -1))
-    denominator = reduce(op.mul, range(1, r+1))
-    return numerator // denominator
 
 
 # Reads map from file
@@ -81,7 +71,7 @@ def write_map(graph, filename):
     f.close()
 
 
-# Given length of graph, calulate number of cities
+# Given length of graph, calculate number of cities
 def calculate_number_of_cities(number_of_connections):
     return (1 + math.sqrt(1 + 4 * 2 * number_of_connections)) / 2
 
@@ -114,7 +104,7 @@ def maximum_number_of_cities_in_less_than_30_minutes():
     limit = 60 * 30  # 30 minutes
     number_of_cities = 2
     while True:
-        unsorted_graph, graph = generate_map(number_of_cities)
+        graph = generate_map(number_of_cities)
         initial_time = time.time()
         find_shortest_path(graph)
         final_time = time.time()

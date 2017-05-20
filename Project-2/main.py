@@ -1,6 +1,7 @@
 import Task_1_NearestNeighbour
 import Task_2_KelpHart
 import Task_2_NearestNeighbour
+import Task_2_BranchAndBound
 import glob
 
 
@@ -55,6 +56,8 @@ def return_python_file(task, algorithm):
             return "Task_2_KelpHart"
         elif algorithm == 2:
             return "Task_2_NearestNeighbour"
+        elif algorithm == 3:
+            return "Task_2_BranchAndBound"
 
 
 def select_map(task):
@@ -81,7 +84,8 @@ def menu():
         elif task == 2:
             algorithm = input_int(1, 2, "Select algorithm:\n"
                                         "1 - Kelp Hart\n"
-                                        "2 - Nearest Neighbour\n")
+                                        "2 - Nearest Neighbour\n"
+                                        "3 - Branch and Bound\n")
         option = input_int(1, 4, "What do you want to do:\n"
                                  "1 - Read Map\n"
                                  "2 - Generate Map\n"
