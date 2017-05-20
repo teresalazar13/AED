@@ -1,4 +1,5 @@
 import random
+import time
 
 
 # TAREFA 2
@@ -98,10 +99,25 @@ def find_shortest_path(graph):
         combinations = combinations - set([parent_city])
 
 
-# Main function
-if __name__ == '__main__':
-    graph = generate_map(11)
-    write_map("Tarefa_2_11.txt", graph)
-    graph2 = read_map("Tarefa_2_11.txt", 11)
-    print(graph2)
-    print(find_shortest_path(graph))
+def maximum_number_of_cities_in_less_than_30_minutes():
+    limit = 60 * 30  # 30 minutes
+    number_of_cities = 2
+    while True:
+        unsorted_graph, graph = generate_map(number_of_cities)
+        initial_time = time.time()
+        find_shortest_path(graph)
+        final_time = time.time()
+        operation_time = final_time - initial_time
+        if operation_time > limit:
+            return
+        else:
+            print(number_of_cities, operation_time)
+            number_of_cities += 100
+
+
+"""
+graph = generate_map(11)
+write_map("Tarefa_2_11.txt", graph)
+graph2 = read_map("Tarefa_2_11.txt", 11)
+print(graph2)
+print(find_shortest_path(graph))"""
