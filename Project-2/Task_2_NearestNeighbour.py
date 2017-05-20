@@ -1,5 +1,6 @@
 import random
 from Graph2 import *
+import time
 
 """Do you just need an ordered sequence of items? Go for a list.
 Do you just need to know whether or not you've already got a particular value, but without ordering (and you don't need
@@ -94,11 +95,26 @@ def find_shortest_path(graph, number_of_cities):
     print(path)
 
 
-# Main function
-if __name__ == '__main__':
-    # graph = create_structure()
-    graph2 = generate_map(4)
-    print(graph2.vertexes)
-    # write_map("Tarefa_2_4.txt", graph2)
-    # print(read_map("Tarefa_2_4.txt").vertexes)
-    find_shortest_path(graph2, 4)
+def maximum_number_of_cities_in_less_than_30_minutes():
+    limit = 60 * 30  # 30 minutes
+    number_of_cities = 2
+    while True:
+        unsorted_graph, graph = generate_map(number_of_cities)
+        initial_time = time.time()
+        find_shortest_path(graph)
+        final_time = time.time()
+        operation_time = final_time - initial_time
+        if operation_time > limit:
+            return
+        else:
+            print(number_of_cities, operation_time)
+            number_of_cities += 100
+
+
+"""
+# graph = create_structure()
+graph2 = generate_map(4)
+print(graph2.vertexes)
+# write_map("Tarefa_2_4.txt", graph2)
+# print(read_map("Tarefa_2_4.txt").vertexes)
+find_shortest_path(graph2, 4)"""

@@ -2,6 +2,7 @@ import operator as op
 import random
 from functools import reduce
 import time
+import math
 
 
 # TAREFA 1
@@ -79,6 +80,11 @@ def write_map(graph, filename):
     f.close()
 
 
+# Given length of graph, calulate number of cities
+def calculate_number_of_cities(number_of_connections):
+    return (1 + math.sqrt(1 + 4 * 2 * number_of_connections)) / 2
+
+
 # Finds the nearest neighbour of a given vertex that is not in path
 def nearest_neighbour(graph, path_set, vertex):
     for i in range(len(graph)):
@@ -89,7 +95,8 @@ def nearest_neighbour(graph, path_set, vertex):
 
 
 # Finds shortest path from start vertex, passing through all vertexes and ending in starting point
-def find_shortest_path(graph, number_of_cities):
+def find_shortest_path(graph):
+    number_of_cities = calculate_number_of_cities(len(graph))
     path = [start]
     path_set = {start}
     current_vertex = start
@@ -108,7 +115,7 @@ def maximum_number_of_cities_in_less_than_30_minutes():
     while True:
         unsorted_graph, graph = generate_map(number_of_cities)
         initial_time = time.time()
-        find_shortest_path(graph, number_of_cities)
+        find_shortest_path(graph, start, number_of_cities)
         final_time = time.time()
         operation_time = final_time - initial_time
         if operation_time > limit:
@@ -119,10 +126,18 @@ def maximum_number_of_cities_in_less_than_30_minutes():
 
 
 """
+# number_maximum_of_cities_in_less_than_30_minutes()
+# graph = create_structure()
+
 unsorted_graph, graph = generate_map(5370)
 write_map(unsorted_graph, "Tarefa_2_5370.txt")
 initial_time = time.time()
 find_shortest_path(graph, "1", 5370)
 final_time = time.time()
 operation_time = final_time - initial_time
-print(5370, operation_time)"""
+print(5370, operation_time)
+
+# graph2 = read_map("Tarefa_2_1000.txt")
+# print(graph2)
+# start = "A"
+# find_shortest_path(graph, start, 1000)"""

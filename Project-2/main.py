@@ -28,19 +28,19 @@ def operate(task, algorithm, option):
     if option == 1:
         filename = select_map(task)
         if filename:
-            Task_2_KelpHart.read_map(filename)
+            Task_1_NearestNeighbour.read_map(filename)
             # getattr(python_file, read_map)(*args, **filename)
         else:
             print("No map found.")
     elif option == 2:
         number_of_cities = input_int(1, 10000, "Please write number of cities: ")
-        Task_2_KelpHart.generate_map(number_of_cities)
+        Task_1_NearestNeighbour.generate_map(number_of_cities)
     elif option == 3:
         filename = select_map(task)
         graph = Task_1_NearestNeighbour.read_map(filename)
-        Task_2_KelpHart.find_shortest_path(graph)
+        Task_1_NearestNeighbour.find_shortest_path(graph)
     else:
-        Task_2_KelpHart.maximum_number_of_cities_in_less_than_30_minutes()
+        Task_1_NearestNeighbour.maximum_number_of_cities_in_less_than_30_minutes()
 
 
 def return_python_file(task, algorithm):
