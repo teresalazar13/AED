@@ -10,6 +10,7 @@ import math
 
 start = "A"
 
+
 # Example of a structure
 def create_structure():
     graph = [[{'A', 'D'}, 1], [{'A', 'C'}, 2], [{'A', 'B'}, 3], [{'B', 'C'}, 4], [{'C', 'D'}, 5], [{'B', 'D'}, 6]]
@@ -32,9 +33,8 @@ def generate_map(number_of_cities):
         for j in range(i + 1, len(cities)):
             graph.append([{cities[i], cities[j]}, distances[counter]])
             counter += 1
-    sorted_graph = list(graph)
-    sorted_graph.sort(key=lambda x: x[1])
-    return graph, sorted_graph
+    graph.sort(key=lambda x: x[1])
+    return graph
 
 
 # Creates array of distances
@@ -67,13 +67,14 @@ def read_map(filename):
         connection = text[i].split(",")
         graph.append([{connection[0], connection[1]}, int(connection[2])])
     graph.sort(key=lambda x: x[1])
+    print(graph)
     return graph
 
 
 # Writes map into file
 def write_map(graph, filename):
     f = open(filename, "w")
-    string = "start in A\n"
+    string = "start in " + start + "\n"
     for i in range(len(graph)):
         string += min(graph[i][0]) + "," + max(graph[i][0]) + "," + str(graph[i][1]) + "\n"
     f.write(string)
@@ -106,7 +107,7 @@ def find_shortest_path(graph):
         path.append(current_vertex)
         path_set.add(current_vertex)
     path.append(start)
-    # print(path)
+    return path
 
 
 def maximum_number_of_cities_in_less_than_30_minutes():
@@ -115,7 +116,7 @@ def maximum_number_of_cities_in_less_than_30_minutes():
     while True:
         unsorted_graph, graph = generate_map(number_of_cities)
         initial_time = time.time()
-        find_shortest_path(graph, start, number_of_cities)
+        find_shortest_path(graph)
         final_time = time.time()
         operation_time = final_time - initial_time
         if operation_time > limit:
@@ -123,21 +124,3 @@ def maximum_number_of_cities_in_less_than_30_minutes():
         else:
             print(number_of_cities, operation_time)
             number_of_cities += 100
-
-
-"""
-# number_maximum_of_cities_in_less_than_30_minutes()
-# graph = create_structure()
-
-unsorted_graph, graph = generate_map(5370)
-write_map(unsorted_graph, "Tarefa_2_5370.txt")
-initial_time = time.time()
-find_shortest_path(graph, "1", 5370)
-final_time = time.time()
-operation_time = final_time - initial_time
-print(5370, operation_time)
-
-# graph2 = read_map("Tarefa_2_1000.txt")
-# print(graph2)
-# start = "A"
-# find_shortest_path(graph, start, 1000)"""

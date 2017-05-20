@@ -1,7 +1,7 @@
 import Task_1_NearestNeighbour
 import Task_2_KelpHart
 import Task_2_NearestNeighbour
-import glob, os
+import glob
 
 
 # Protection for int inputs
@@ -28,19 +28,22 @@ def operate(task, algorithm, option):
     if option == 1:
         filename = select_map(task)
         if filename:
-            Task_1_NearestNeighbour.read_map(filename)
-            # getattr(python_file, read_map)(*args, **filename)
+            getattr(globals()[python_file], 'read_map')(filename)
         else:
             print("No map found.")
     elif option == 2:
         number_of_cities = input_int(1, 10000, "Please write number of cities: ")
-        Task_1_NearestNeighbour.generate_map(number_of_cities)
+        graph = getattr(globals()[python_file], 'generate_map')(number_of_cities)
+        filename = "Tarefa_" + str(task) + "_" + str(number_of_cities) + ".txt"
+        getattr(globals()[python_file], 'write_map')(graph, filename)
+        print(filename, "was created")
+        print(graph)
     elif option == 3:
         filename = select_map(task)
-        graph = Task_1_NearestNeighbour.read_map(filename)
-        Task_1_NearestNeighbour.find_shortest_path(graph)
+        graph = getattr(globals()[python_file], 'read_map')(filename)
+        getattr(globals()[python_file], 'find_shortest_path')(graph)
     else:
-        Task_1_NearestNeighbour.maximum_number_of_cities_in_less_than_30_minutes()
+        getattr(globals()[python_file], 'maximum_number_of_cities_in_less_than_30_minutes')
 
 
 def return_python_file(task, algorithm):
@@ -71,6 +74,7 @@ def select_map(task):
 def menu():
     while True:
         task = input_int(1, 2, "Which Task do you want to check? ")
+        algorithm = 0
         if task == 1:
             algorithm = input_int(1, 1, "Select algorithm:\n"
                                         "1 - Nearest Neighbour\n")
@@ -78,14 +82,19 @@ def menu():
             algorithm = input_int(1, 2, "Select algorithm:\n"
                                         "1 - Kelp Hart\n"
                                         "2 - Nearest Neighbour\n")
-        option = input_int(1, 4, "What do you wanto to do:\n"
-                               "1 - Read Map\n"
-                               "2 - Generate Map\n"
-                               "3 - Print shortest path of a map\n"
-                               "4 - Find maximum number of cities that the program can find the shortest path in less "
-                               "than 30 minutes\n")
+        option = input_int(1, 4, "What do you want to do:\n"
+                                 "1 - Read Map\n"
+                                 "2 - Generate Map\n"
+                                 "3 - Print shortest path of a map\n"
+                                 "4 - Find maximum number of cities that the program can find the shortest path in less"
+                                 "than 30 minutes\n")
         operate(task, algorithm, option)
 
 
 if __name__ == '__main__':
     menu()
+
+"""Do you just need an ordered sequence of items? Go for a list.
+Do you just need to know whether or not you've already got a particular value, but without ordering (and you don't need
+to store duplicates)? Use a set.
+Do you need to associate values with keys, so you can look them up efficiently (by key) later on? Use a dictionary."""

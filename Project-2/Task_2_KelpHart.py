@@ -41,8 +41,12 @@ def get_distances(n):
 
 
 # Reads map from file
-def read_map(filename, number_of_cities):
+def read_map(filename):
     f = open(filename, "r", encoding='utf-8')
+    number_of_cities = ""
+    for i in range(9, len(filename) - 4):
+        number_of_cities += filename[i]
+    number_of_cities = int(number_of_cities)
     text = f.read()
     text = text.split("\n")
     graph = []
@@ -54,6 +58,7 @@ def read_map(filename, number_of_cities):
     for i in range(1, len(text) - 1):
         connection = text[i].split(",")
         graph[ord(connection[1]) - 65][ord(connection[0]) - 65] = int(connection[2])
+    print(graph)
     return graph
 
 
@@ -113,11 +118,3 @@ def maximum_number_of_cities_in_less_than_30_minutes():
         else:
             print(number_of_cities, operation_time)
             number_of_cities += 100
-
-
-"""
-graph = generate_map(11)
-write_map("Tarefa_2_11.txt", graph)
-graph2 = read_map("Tarefa_2_11.txt", 11)
-print(graph2)
-print(find_shortest_path(graph))"""

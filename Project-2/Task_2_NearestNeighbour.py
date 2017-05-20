@@ -2,11 +2,6 @@ import random
 from Graph2 import *
 import time
 
-"""Do you just need an ordered sequence of items? Go for a list.
-Do you just need to know whether or not you've already got a particular value, but without ordering (and you don't need
-to store duplicates)? Use a set.
-Do you need to associate values with keys, so you can look them up efficiently (by key) later on? Use a dictionary."""
-
 
 # TAREFA 2
 # ALGORITHM - NEAREST NEIGHBOUR
@@ -68,13 +63,14 @@ def read_map(filename):
     for i in range(1, len(text) - 1):
         connection = text[i].split(",")
         graph.add_vertex_and_weight(connection[0], connection[1], int(connection[2]))
+    print(graph.vertexes)
     return graph
 
 
 # Writes map into file
 def write_map(filename, graph):
     f = open(filename, "w", encoding='utf-8')
-    string = "start in A\n"
+    string = "start in " + graph.start + "\n"
     for i in range(len(graph.vertexes)):
         vertex = graph.vertexes[chr(i + 65)]
         for j in range(len(vertex)):
@@ -92,7 +88,7 @@ def find_shortest_path(graph, number_of_cities):
         path.append(current_vertex)
         path_set.add(current_vertex)
     path.append(graph.start)
-    print(path)
+    return path
 
 
 def maximum_number_of_cities_in_less_than_30_minutes():
@@ -109,12 +105,3 @@ def maximum_number_of_cities_in_less_than_30_minutes():
         else:
             print(number_of_cities, operation_time)
             number_of_cities += 100
-
-
-"""
-# graph = create_structure()
-graph2 = generate_map(4)
-print(graph2.vertexes)
-# write_map("Tarefa_2_4.txt", graph2)
-# print(read_map("Tarefa_2_4.txt").vertexes)
-find_shortest_path(graph2, 4)"""
