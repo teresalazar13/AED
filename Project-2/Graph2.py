@@ -18,8 +18,8 @@ class Graph2:
             self.add_vertex(other_vertex)
         self.add_weight(vertex, other_vertex, weight)
 
-    def nearest_neighbour(self, path, vertex):
+    def nearest_neighbour(self, path_set, vertex):
         for i in range(len(self.vertexes[vertex])):
-            if self.vertexes[vertex][i][0] not in path:
+            if self.vertexes[vertex][i][0] not in path_set:
                 return self.vertexes[vertex][i][0]
         return self.start

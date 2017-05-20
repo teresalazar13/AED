@@ -82,20 +82,23 @@ def write_map(filename, graph):
     f.close()
 
 
-def find_shortest_path(graph):
-    path = [graph.start, graph.nearest_neighbour([graph.start], graph.start)]
-    current_vertex = path[-1]
-    while current_vertex != graph.start:
-        path.append(graph.nearest_neighbour(path, current_vertex))
-        current_vertex = path[-1]
+def find_shortest_path(graph, number_of_cities):
+    path = [graph.start]
+    path_set = {graph.start}
+    current_vertex = graph.start
+    while len(path) != number_of_cities:
+        current_vertex = graph.nearest_neighbour(path_set, current_vertex)
+        path.append(current_vertex)
+        path_set.add(current_vertex)
+    path.append(graph.start)
     print(path)
 
 
 # Main function
 if __name__ == '__main__':
     # graph = create_structure()
-    graph2 = generate_map(20)
+    graph2 = generate_map(4)
     print(graph2.vertexes)
-    write_map("Tarefa_2_20.txt", graph2)
-    print(read_map("Tarefa_2_20.txt").vertexes)
-    # find_shortest_path(graph2)
+    # write_map("Tarefa_2_4.txt", graph2)
+    # print(read_map("Tarefa_2_4.txt").vertexes)
+    find_shortest_path(graph2, 4)
