@@ -2,9 +2,11 @@ class Graph2:
     def __init__(self, start):
         self.vertexes = {}
         self.start = start
+        self.number_of_vertexes = 0
 
     def add_vertex(self, vertex):
         self.vertexes[vertex] = []
+        self.number_of_vertexes += 1
 
     def add_weight(self, vertex, other_vertex, weight):
         self.vertexes[vertex].append([other_vertex, weight])

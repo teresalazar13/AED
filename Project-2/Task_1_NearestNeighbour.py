@@ -8,7 +8,7 @@ import math
 # TAREFA 1
 # ALGORITHM - NEAREST NEIGHBOUR
 
-start = "A"
+start = "C0"
 
 
 # Example of a structure
@@ -23,9 +23,7 @@ def generate_map(number_of_cities):
     cities = []
     # Creates cities
     for i in range(number_of_cities):
-        # TODO->CHANGE
-        # cities.append(chr(i + 65))
-        cities.append(str(i))
+        cities.append("C" + str(i))
     # Creates Graph and selects random city to start
     graph = []
     counter = 0
@@ -33,13 +31,16 @@ def generate_map(number_of_cities):
         for j in range(i + 1, len(cities)):
             graph.append([{cities[i], cities[j]}, distances[counter]])
             counter += 1
-    graph.sort(key=lambda x: x[1])
-    return graph
+    sorted_graph = list(graph)
+    filename = "Tarefa_1_" + str(number_of_cities) + ".txt"
+    write_map(graph, filename)
+    sorted_graph.sort(key=lambda x: x[1])
+    return sorted_graph
 
 
 # Creates array of distances
 def get_distances(n):
-    range_of_distances = n * (n-1) / 2
+    range_of_distances = n * (n-1) // 2
     distances = []
     for i in range(5, range_of_distances + 10):
         distances.append(i*5)
@@ -57,13 +58,12 @@ def read_map(filename):
         connection = text[i].split(",")
         graph.append([{connection[0], connection[1]}, int(connection[2])])
     graph.sort(key=lambda x: x[1])
-    print(graph)
     return graph
 
 
 # Writes map into file
 def write_map(graph, filename):
-    f = open(filename, "w")
+    f = open(filename, "w", encoding='utf-8')
     string = "start in " + start + "\n"
     for i in range(len(graph)):
         string += min(graph[i][0]) + "," + max(graph[i][0]) + "," + str(graph[i][1]) + "\n"

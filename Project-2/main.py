@@ -29,22 +29,24 @@ def operate(task, algorithm, option):
     if option == 1:
         filename = select_map(task)
         if filename:
-            getattr(globals()[python_file], 'read_map')(filename)
+            print(getattr(globals()[python_file], 'read_map')(filename))
         else:
-            print("No map found.")
+            print("No map found")
     elif option == 2:
         number_of_cities = input_int(1, 10000, "Please write number of cities: ")
         graph = getattr(globals()[python_file], 'generate_map')(number_of_cities)
         filename = "Tarefa_" + str(task) + "_" + str(number_of_cities) + ".txt"
-        getattr(globals()[python_file], 'write_map')(graph, filename)
         print(filename, "was created")
         print(graph)
     elif option == 3:
         filename = select_map(task)
-        graph = getattr(globals()[python_file], 'read_map')(filename)
-        getattr(globals()[python_file], 'find_shortest_path')(graph)
+        if filename:
+            graph = getattr(globals()[python_file], 'read_map')(filename)
+            print(getattr(globals()[python_file], 'find_shortest_path')(graph))
+        else:
+            print("No map found")
     else:
-        getattr(globals()[python_file], 'maximum_number_of_cities_in_less_than_30_minutes')
+        getattr(globals()[python_file], 'maximum_number_of_cities_in_less_than_30_minutes')()
 
 
 def return_python_file(task, algorithm):
@@ -82,7 +84,7 @@ def menu():
             algorithm = input_int(1, 1, "Select algorithm:\n"
                                         "1 - Nearest Neighbour\n")
         elif task == 2:
-            algorithm = input_int(1, 2, "Select algorithm:\n"
+            algorithm = input_int(1, 3, "Select algorithm:\n"
                                         "1 - Kelp Hart\n"
                                         "2 - Nearest Neighbour\n"
                                         "3 - Branch and Bound\n")
@@ -91,7 +93,7 @@ def menu():
                                  "2 - Generate Map\n"
                                  "3 - Print shortest path of a map\n"
                                  "4 - Find maximum number of cities that the program can find the shortest path in less"
-                                 "than 30 minutes\n")
+                                 " than 30 minutes\n")
         operate(task, algorithm, option)
 
 

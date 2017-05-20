@@ -39,6 +39,8 @@ def generate_map(number_of_cities):
             if i != j:
                 graph.add_edge(cities[i], cities[j], distances[counter])
                 counter += 1
+    filename = "Tarefa_2_" + str(number_of_cities) + ".txt"
+    write_map(graph, filename)
     return graph
 
 
@@ -89,4 +91,4 @@ def maximum_number_of_cities_in_less_than_30_minutes():
             return
         else:
             print(number_of_cities, operation_time)
-            number_of_cities += 100
+            number_of_cities += 1

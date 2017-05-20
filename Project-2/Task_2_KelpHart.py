@@ -27,6 +27,8 @@ def generate_map(number_of_cities):
             else:
                 row.append(0)
         graph.append(row)
+    filename = "Tarefa_2_" + str(number_of_cities) + ".txt"
+    write_map(filename, graph)
     return graph
 
 
@@ -57,19 +59,18 @@ def read_map(filename):
         graph.append(row)
     for i in range(1, len(text) - 1):
         connection = text[i].split(",")
-        graph[ord(connection[1]) - 65][ord(connection[0]) - 65] = int(connection[2])
-    print(graph)
+        graph[int(connection[1][1:])][int(connection[0][1:])] = int(connection[2])
     return graph
 
 
 # Writes map into file
 def write_map(filename, graph):
     f = open(filename, "w", encoding='utf-8')
-    string = "start in A\n"
+    string = "start in C0\n"
     for i in range(len(graph)):
         for j in range(len(graph)):
             if i != j:
-                string += chr(j + 65) + "," + chr(i + 65) + "," + str(graph[i][j]) + "\n"
+                string += "C" + str(i) + ",C" + str(j) + "," + str(graph[i][j]) + "\n"
     f.write(string)
     f.close()
 
@@ -89,7 +90,7 @@ def find_shortest_path(graph):
         else:
             return graph[0][target_city], 0
 
-    best_path = []
+    best_path = ["C0"]
     distances = []
     target_city = 0
     combinations = set(range(1, len(graph)))
@@ -97,8 +98,9 @@ def find_shortest_path(graph):
     while True:
         distance, parent_city = get_minimum_distance_and_parent(target_city, combinations)
         if parent_city == 0:
+            best_path.append("C" + str(parent_city))
             return best_path[::-1], distances[0]
-        best_path.append(parent_city)
+        best_path.append("C" + str(parent_city))
         distances.append(distance)
         target_city = parent_city
         combinations = combinations - set([parent_city])
@@ -110,6 +112,7 @@ def maximum_number_of_cities_in_less_than_30_minutes():
     while True:
         unsorted_graph, graph = generate_map(number_of_cities)
         initial_time = time.time()
+        print(graph)
         find_shortest_path(graph)
         final_time = time.time()
         operation_time = final_time - initial_time
@@ -117,4 +120,4 @@ def maximum_number_of_cities_in_less_than_30_minutes():
             return
         else:
             print(number_of_cities, operation_time)
-            number_of_cities += 100
+            number_of_cities += 1

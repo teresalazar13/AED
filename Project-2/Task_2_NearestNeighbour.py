@@ -31,16 +31,19 @@ def create_structure():
 
 # Generates map, given the number of cities
 def generate_map(number_of_cities):
-    graph = Graph2("A")
+    graph = Graph2("C0")
     distances = get_distances(number_of_cities)
     counter = 0
     for i in range(number_of_cities):
-        graph.add_vertex(chr(65 + i))
+        graph.add_vertex("C" + str(i))
     for i in range(number_of_cities):
         for j in range(number_of_cities):
             if i != j:
-                graph.add_weight(chr(65 + i), chr(65 + j), distances[counter])
+                graph.add_weight("C" + str(i), "C" + str(j), distances[counter])
                 counter += 1
+    filename = "Tarefa_2_" + str(number_of_cities) + ".txt"
+    write_map(filename, graph)
+    print(graph.vertexes)
     return graph
 
 
@@ -72,18 +75,18 @@ def write_map(filename, graph):
     f = open(filename, "w", encoding='utf-8')
     string = "start in " + graph.start + "\n"
     for i in range(len(graph.vertexes)):
-        vertex = graph.vertexes[chr(i + 65)]
+        vertex = graph.vertexes["C" + str(i)]
         for j in range(len(vertex)):
-            string += chr(i + 65) + "," + vertex[j][0] + "," + str(vertex[j][1]) + "\n"
+            string += "C" + str(i) + "," + vertex[j][0] + "," + str(vertex[j][1]) + "\n"
     f.write(string)
     f.close()
 
 
-def find_shortest_path(graph, number_of_cities):
+def find_shortest_path(graph):
     path = [graph.start]
     path_set = {graph.start}
     current_vertex = graph.start
-    while len(path) != number_of_cities:
+    while len(path) != graph.number_of_vertexes:
         current_vertex = graph.nearest_neighbour(path_set, current_vertex)
         path.append(current_vertex)
         path_set.add(current_vertex)
