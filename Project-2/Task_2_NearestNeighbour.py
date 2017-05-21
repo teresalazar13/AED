@@ -1,6 +1,8 @@
 import random
 from Graph2 import *
 import time
+import os.path
+import main
 
 
 # TAREFA 2
@@ -29,6 +31,11 @@ def create_structure():
     return graph
 
 
+def print_map(graph):
+    for k, v in graph.vertexes.items():
+        print(k, v)
+
+
 # Generates map, given the number of cities
 def generate_map(number_of_cities):
     graph = Graph2("C0")
@@ -43,8 +50,7 @@ def generate_map(number_of_cities):
                 counter += 1
     filename = "Tarefa_2_" + str(number_of_cities) + ".txt"
     write_map(filename, graph)
-    print(graph.vertexes)
-    return graph
+    return graph, graph
 
 
 # Creates array of distances
@@ -62,11 +68,11 @@ def read_map(filename):
     f = open(filename, "r", encoding='utf-8')
     text = f.read()
     text = text.split("\n")
-    graph = Graph2(text[0])
+    graph = Graph2("C0")
     for i in range(1, len(text) - 1):
         connection = text[i].split(",")
         graph.add_vertex_and_weight(connection[0], connection[1], int(connection[2]))
-    print(graph.vertexes)
+    f.close()
     return graph
 
 
@@ -83,28 +89,42 @@ def write_map(filename, graph):
 
 
 def find_shortest_path(graph):
+    initial_time = time.time()
+    distance = 0
     path = [graph.start]
     path_set = {graph.start}
     current_vertex = graph.start
     while len(path) != graph.number_of_vertexes:
-        current_vertex = graph.nearest_neighbour(path_set, current_vertex)
+        current_vertex, d = graph.nearest_neighbour(path_set, current_vertex)
         path.append(current_vertex)
         path_set.add(current_vertex)
+        distance += d
     path.append(graph.start)
-    return path
+    final_time = time.time()
+    operation_time = final_time - initial_time
+    print("Number of cities: ", graph.number_of_vertexes)
+    print("Path: ", path)
+    print("Total Distance", distance)
+    print("Operation time: ", operation_time)
+    return path, distance, operation_time
 
 
 def maximum_number_of_cities_in_less_than_30_minutes():
     limit = 60 * 30  # 30 minutes
-    number_of_cities = 2
+    number_of_cities = 1702
     while True:
-        unsorted_graph, graph = generate_map(number_of_cities)
-        initial_time = time.time()
-        find_shortest_path(graph)
-        final_time = time.time()
-        operation_time = final_time - initial_time
+        filename = "Tarefa_2_" + str(number_of_cities) + ".txt"
+        if os.path.exists(filename):
+            print("Map exists. Starting calculations")
+            graph = read_map(filename)
+        else:
+            print("Map doesn't exist. Creating map for ", number_of_cities)
+            main.generate_map_2(number_of_cities)
+            graph = read_map(filename)
+            print("Map created. Starting calculations")
+
+        path, distance, operation_time = find_shortest_path(graph)
         if operation_time > limit:
             return
         else:
-            print(number_of_cities, operation_time)
             number_of_cities += 100

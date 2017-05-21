@@ -1,8 +1,8 @@
-import operator as op
 import random
-from functools import reduce
 import time
 import math
+import os.path
+import main
 
 
 # TAREFA 1
@@ -15,6 +15,11 @@ start = "C0"
 def create_structure():
     graph = [[{'A', 'D'}, 1], [{'A', 'C'}, 2], [{'A', 'B'}, 3], [{'B', 'C'}, 4], [{'C', 'D'}, 5], [{'B', 'D'}, 6]]
     return graph
+
+
+def print_map(graph):
+    for i in range(len(graph)):
+        print(graph[i])
 
 
 # Generates map, given the number of cities
@@ -35,7 +40,7 @@ def generate_map(number_of_cities):
     filename = "Tarefa_1_" + str(number_of_cities) + ".txt"
     write_map(graph, filename)
     sorted_graph.sort(key=lambda x: x[1])
-    return sorted_graph
+    return sorted_graph, graph
 
 
 # Creates array of distances
@@ -58,6 +63,7 @@ def read_map(filename):
         connection = text[i].split(",")
         graph.append([{connection[0], connection[1]}, int(connection[2])])
     graph.sort(key=lambda x: x[1])
+    f.close()
     return graph
 
 
@@ -82,35 +88,49 @@ def nearest_neighbour(graph, path_set, vertex):
         # If vertex is in connection between 2 vertexes AND the other vertex is not in path
         if vertex in graph[i][0] and (graph[i][0] - {vertex}).pop() not in path_set:
             vertex = (graph[i][0] - {vertex}).pop()
-            return vertex
+            return vertex, 0
 
 
 # Finds shortest path from start vertex, passing through all vertexes and ending in starting point
 def find_shortest_path(graph):
     number_of_cities = calculate_number_of_cities(len(graph))
+    initial_time = time.time()
+    distance = 0
     path = [start]
     path_set = {start}
     current_vertex = start
     # While the path's length is smaller than the number of cities, find the nearest neighbour of a city
     while len(path) != number_of_cities:
-        current_vertex = nearest_neighbour(graph, path_set, current_vertex)
+        current_vertex, d = nearest_neighbour(graph, path_set, current_vertex)
         path.append(current_vertex)
         path_set.add(current_vertex)
+        distance += d
     path.append(start)
-    return path
+    final_time = time.time()
+    operation_time = final_time - initial_time
+    print("Number of cities: ", number_of_cities)
+    print("Path: ", path)
+    print("Total Distance", )
+    print("Operation time: ", operation_time)
+    return path, distance, operation_time
 
 
 def maximum_number_of_cities_in_less_than_30_minutes():
     limit = 60 * 30  # 30 minutes
     number_of_cities = 2
     while True:
-        graph = generate_map(number_of_cities)
-        initial_time = time.time()
-        find_shortest_path(graph)
-        final_time = time.time()
-        operation_time = final_time - initial_time
+        filename = "Tarefa_1_" + str(number_of_cities) + ".txt"
+        if os.path.exists(filename):
+            print("Map exists. Starting calculations")
+            graph = read_map(filename)
+        else:
+            print("Map doesn't exist. Creating map for ", number_of_cities)
+            main.generate_map_1(number_of_cities)
+            graph = read_map(filename)
+            print("Map created. Starting calculations")
+
+        path, distance, operation_time = find_shortest_path(graph)
         if operation_time > limit:
             return
         else:
-            print(number_of_cities, operation_time)
             number_of_cities += 100

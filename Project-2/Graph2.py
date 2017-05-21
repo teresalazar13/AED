@@ -23,5 +23,5 @@ class Graph2:
     def nearest_neighbour(self, path_set, vertex):
         for i in range(len(self.vertexes[vertex])):
             if self.vertexes[vertex][i][0] not in path_set:
-                return self.vertexes[vertex][i][0]
+                return self.vertexes[vertex][i][0], 0
         return self.start
